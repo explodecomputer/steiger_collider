@@ -1,0 +1,119 @@
+---
+title: Analysis of smoking and FEV
+author: Gibran Hemani
+date: 2021-09-04
+---
+
+Lutz et al 2021 suggest that the MR Steiger test will lead to the incorrect causal direction for smoking status (current vs former) on lung function (FEV). Presumably the hypothesis is that going from current to former should have a positive causal influence on FEV, and that FEV should not have a causal influence on going from current to former. 
+
+Lutz et al report the Steiger test indicating the causal direction of FEV -> smoking status, and that this indicates horizontal pleiotropy biasing the result.
+
+Questions:
+
+1. Is there a reason that lung function wouldn't lead smokers to stop smoking?
+2. What are the results for these analyses using publicly available summary data?
+3. The analysis of current vs former smokers is a progression trait which is susceptible to collider bias. Does this impact MR Steiger?
+
+
+```{r}
+library(TwoSampleMR)
+library(ieugwasr)
+library(tidyverse)
+library(simulateGP)
+library(knitr)
+```
+
+## Re-analysis
+
+First use cigarettes smoked per day as the exposure and FEV1 as the outcome
+
+Cigarettes smoked per day:
+
+```{r}
+gwasinfo("ieu-b-25") %>% str()
+```
+
+FEV1:
+
+```{r}
+gwasinfo("ukb-b-19657") %>% str()
+```
+
+MR analysis:
+
+```{r}
+d1 <- make_dat("ieu-b-25", "ukb-b-19657")
+mr(d1) %>% kable()
+```
+
+Discovered 23 instruments. Higher smoking leads to lower lung function.
+
+Directionality test:
+
+```{r}
+directionality_test(d1) %>% str()
+```
+
+The causal orientation is estimated to be from smoking to lung function.
+
+Now try former vs current smokers as the exposure.
+
+```{r}
+gwasinfo("ieu-a-963") %>% str()
+```
+
+Are there any instruments?
+
+```{r}
+tophits("ieu-a-963")
+```
+
+No instruments. Use the instruments selected by Lutz et al.
+
+
+```{r}
+lutz_rs <- c("rs56113850", "rs12461383", "rs7260329", "rs11858836", "rs72738786", "rs11633958", "rs8192482", "rs2869548")
+e2a <- extract_outcome_data(lutz_rs, "ieu-a-963") %>% add_rsq()
+e2 <- convert_outcome_to_exposure(e2a)
+o2 <- extract_outcome_data(lutz_rs, "ukb-b-19657")
+d2 <- harmonise_data(e2, o2)
+d2 <- add_rsq(d2)
+d2 <- add_metadata(d2)
+d2$r.exposure <- sqrt(d2$rsq.exposure) * sign(d2$beta.exposure)
+d2$r.outcome <- sqrt(d2$rsq.outcome) * sign(d2$beta.outcome)
+mr(d2) %>% kable()
+```
+
+Smoking cessation appears to increase FEV here.
+
+```{r}
+directionality_test(d2) %>% str()
+```
+
+The causal direction is still from smoking cessation to FEV.
+
+We could also try another dataset e.g. from UK Biobank
+
+```{r}
+gwasinfo("ukb-b-11355") %>% str()
+```
+
+```{r}
+d3 <- make_dat("ukb-b-11355", "ukb-b-19657")
+mr(d3)
+```
+
+Again, the effect of smoking cessation on FEV is positive.
+
+```{r}
+directionality_test(d3)
+```
+
+And the causal direction is inferred to be from smoking cessation to FEV.
+
+
+## Collider bias
+
+Simulations to follow...
+
+
