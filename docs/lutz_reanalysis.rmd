@@ -1,37 +1,92 @@
 ---
 title: Analysis of smoking and FEV
 author: Gibran Hemani
+output: html_notebook
 date: 2021-09-04
 ---
 
 Lutz et al 2021 suggest that the MR Steiger test will lead to the incorrect causal direction for smoking status (current vs former) on lung function (FEV). Presumably the hypothesis is that going from current to former should have a positive causal influence on FEV, and that FEV should not have a causal influence on going from current to former. 
 
-Lutz et al report the Steiger test indicating the causal direction of FEV -> smoking status, and that this indicates horizontal pleiotropy biasing the result.
+Lutz et al report the Steiger test result of the causal direction of FEV -> smoking status, and that this indicates horizontal pleiotropy is biasing the result.
 
-Questions:
+Objectives:
 
-1. Is there a reason that lung function wouldn't lead smokers to stop smoking?
-2. What are the results for these analyses using publicly available summary data?
-3. The analysis of current vs former smokers is a progression trait which is susceptible to collider bias. Does this impact MR Steiger?
-
+1. Can sample selection distort the MR Steiger method?
+2. Re-analysis of smoking and lung function using public GWAS summary data
 
 ```{r}
+suppressMessages(suppressPackageStartupMessages(suppressWarnings({
 library(TwoSampleMR)
 library(ieugwasr)
 library(tidyverse)
 library(simulateGP)
 library(knitr)
+})))
+knitr::opts_chunk$set(warning=FALSE)
 ```
 
-## Re-analysis
+## Can sample selection distort the MR Steiger method?
 
-First use cigarettes smoked per day as the exposure and FEV1 as the outcome
-
-Cigarettes smoked per day:
+Here is a simple numerical example where conditioning on the exposure leads to the wrong direction. There is an instrument for the exposure, the exposure influences the outcome, and there is a confounder for the exposure and outcome
 
 ```{r}
-gwasinfo("ieu-b-25") %>% str()
+n <- 100000
+iv <- rnorm(n) + 1
+u <- rnorm(n)
+exposure <- iv * 0.5 + rnorm(n) + u * -2
+outcome <- exposure * 0.5 + rnorm(n) + 2 * u
 ```
+
+In the MR Steiger analysis of the complete data the direction is correct
+
+```{r}
+cor(iv, exposure)^2
+cor(iv, outcome)^2
+```
+
+In the selected sample, using only individuals with a high exposure, the variance in the exposure has been restricted and the rsq is higher for the outcome than the exposure
+
+```{r}
+cor(iv[exposure>=1], exposure[exposure>=1])^2
+cor(iv[exposure>=1], outcome[exposure>=1])^2
+```
+
+What about collider bias? Now the exposure and outcome both influence sample selection
+
+```{r}
+n <- 100000
+iv <- rnorm(n) + 1
+u <- rnorm(n)
+exposure <- iv * 0.5 + rnorm(n) + u * -2
+outcome <- exposure * 0.5 + rnorm(n) + 2 * u
+collider <- exposure + outcome
+selected <- collider > median(collider)
+```
+
+In the complete sample the MR Steiger method is correct
+
+```{r}
+cor(iv, exposure)^2
+cor(iv, outcome)^2
+```
+
+In the selected sample the causal direction appears reverse
+
+```{r}
+cor(iv[selected], exposure[selected])^2
+cor(iv[selected], outcome[selected])^2
+```
+
+
+### Summary
+
+- Lutz et al restrict the analysis to ever-smokers, this reduces the variance in the exposure and can lead to the IV-exposure rsq being lower than the IV-outcome rsq
+- Lutz et al restrict the analysis to COPD cases, which is influenced by the exposure and outcome. This leads to collider bias that distorts the IV-exposure and IV-outcome rsq values
+
+
+## Re-analysis of smoking and lung function using public GWAS summary data
+
+Use UK Biobank lung function measure FEV1
 
 FEV1:
 
@@ -39,11 +94,42 @@ FEV1:
 gwasinfo("ukb-b-19657") %>% str()
 ```
 
+Use various smoking behaviour traits as exposure.
+
+### Ever / never smokers on FEV1
+
+```{r}
+gwasinfo("ukb-b-20261") %>% str()
+```
+```{r}
+d0 <- make_dat("ukb-b-20261", "ukb-b-19657")
+res0 <- mr(d0)
+kable(res0)
+```
+
+Directionality test
+
+```{r}
+s0 <- directionality_test(d0) 
+str(s0)
+```
+
+### Cigarettes smoked per day on FEV1
+
+Use cigarettes smoked per day as the exposure and FEV1 as the outcome
+
+Cigarettes smoked per day:
+
+```{r}
+gwasinfo("ieu-b-25") %>% str()
+```
+
 MR analysis:
 
 ```{r}
 d1 <- make_dat("ieu-b-25", "ukb-b-19657")
-mr(d1) %>% kable()
+res1 <- mr(d1)
+kable(res1)
 ```
 
 Discovered 23 instruments. Higher smoking leads to lower lung function.
@@ -51,10 +137,13 @@ Discovered 23 instruments. Higher smoking leads to lower lung function.
 Directionality test:
 
 ```{r}
-directionality_test(d1) %>% str()
+s1 <- directionality_test(d1)
+str(s1)
 ```
 
 The causal orientation is estimated to be from smoking to lung function.
+
+### Former / current smokers on FEV1
 
 Now try former vs current smokers as the exposure.
 
@@ -81,16 +170,20 @@ d2 <- add_rsq(d2)
 d2 <- add_metadata(d2)
 d2$r.exposure <- sqrt(d2$rsq.exposure) * sign(d2$beta.exposure)
 d2$r.outcome <- sqrt(d2$rsq.outcome) * sign(d2$beta.outcome)
-mr(d2) %>% kable()
+res2 <- mr(d2)
+kable(res2)
 ```
 
 Smoking cessation appears to increase FEV here.
 
 ```{r}
-directionality_test(d2) %>% str()
+s2 <- directionality_test(d2)
+str(s2)
 ```
 
 The causal direction is still from smoking cessation to FEV.
+
+### Former / current smokers vs FEV1 using UK Biobank
 
 We could also try another dataset e.g. from UK Biobank
 
@@ -100,20 +193,39 @@ gwasinfo("ukb-b-11355") %>% str()
 
 ```{r}
 d3 <- make_dat("ukb-b-11355", "ukb-b-19657")
-mr(d3)
+res3 <- mr(d3)
+kable(res3)
 ```
 
 Again, the effect of smoking cessation on FEV is positive.
 
 ```{r}
-directionality_test(d3)
+s3 <- directionality_test(d3)
+str(s3)
 ```
 
 And the causal direction is inferred to be from smoking cessation to FEV.
 
 
-## Collider bias
+### Summarise results
 
-Simulations to follow...
+```{r}
+tibble(
+  exposure = c(
+    "Ever vs never smoked, UK Biobank",
+    "Cigarette smoked per day, Liu et al 2019",
+    "Smoking cessation, Furberg et al 2010, using Lutz et al selected instruments",
+    "Smoking cessation, UK Biobank"),
+  nsnp = sapply(list(d0, d1, d2, d3), function(x) sum(x$mr_keep)),
+  mr = sapply(list(res0, res1, res2, res3), function(x) x$b[x$method %in% c("Inverse variance weighted", "Wald ratio")]),
+  mr_se = sapply(list(res0, res1, res2, res3), function(x) x$se[x$method %in% c("Inverse variance weighted", "Wald ratio")]),
+  rsq_exp = sapply(list(s0, s1, s2, s3), function(x) x$snp_r2.exposure),
+  rsq_out = sapply(list(s0, s1, s2, s3), function(x) x$snp_r2.outcome),
+  correct_steiger = sapply(list(s0, s1, s2, s3), function(x) x$correct_causal_direction),
+  steiger_pval = sapply(list(s0, s1, s2, s3), function(x) x$steiger_pval)
+)
+```
 
+- Smoking behaviours have a causal influence on lung function (FEV1), where higher smoking relates to poorer lung function
+- The causal direction is consistently from smoking behaviour to lung function
 
