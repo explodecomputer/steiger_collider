@@ -5,9 +5,15 @@ output: html_notebook
 date: 2021-09-04
 ---
 
+The source code for this document is available at: https://github.com/explodecomputer/steiger_collider/blob/main/docs/lutz_reanalysis.rmd
+
+---
+
+## Background
+
 Lutz et al 2021 suggest that the MR Steiger test will lead to the incorrect causal direction for smoking status (current vs former) on lung function (FEV). Presumably the hypothesis is that going from current to former should have a positive causal influence on FEV, and that FEV should not have a causal influence on going from current to former. 
 
-Lutz et al report the Steiger test result of the causal direction of FEV -> smoking status, and that this indicates horizontal pleiotropy is biasing the result.
+Lutz et al report the Steiger test result of the causal direction of FEV1 -> smoking status, and that this indicates horizontal pleiotropy is biasing the result.
 
 Objectives:
 
@@ -16,11 +22,10 @@ Objectives:
 
 ```{r}
 suppressMessages(suppressPackageStartupMessages(suppressWarnings({
-library(TwoSampleMR)
-library(ieugwasr)
-library(tidyverse)
-library(simulateGP)
-library(knitr)
+  library(TwoSampleMR)
+  library(ieugwasr)
+  library(tidyverse)
+  library(knitr)
 })))
 knitr::opts_chunk$set(warning=FALSE)
 ```
@@ -162,17 +167,18 @@ No instruments. Use the instruments selected by Lutz et al.
 
 ```{r}
 lutz_rs <- c("rs56113850", "rs12461383", "rs7260329", "rs11858836", "rs72738786", "rs11633958", "rs8192482", "rs2869548")
-e2a <- extract_outcome_data(lutz_rs, "ieu-a-963") %>% add_rsq()
+e2a <- extract_outcome_data(lutz_rs, "ieu-a-963")
 e2 <- convert_outcome_to_exposure(e2a)
 o2 <- extract_outcome_data(lutz_rs, "ukb-b-19657")
 d2 <- harmonise_data(e2, o2)
-d2 <- add_rsq(d2)
 d2 <- add_metadata(d2)
-d2$r.exposure <- sqrt(d2$rsq.exposure) * sign(d2$beta.exposure)
-d2$r.outcome <- sqrt(d2$rsq.outcome) * sign(d2$beta.outcome)
+d2 <- add_rsq(d2)
 res2 <- mr(d2)
 kable(res2)
 ```
+
+
+
 
 Smoking cessation appears to increase FEV here.
 
@@ -182,6 +188,27 @@ str(s2)
 ```
 
 The causal direction is still from smoking cessation to FEV.
+
+
+### Steiger filtering
+
+Lutz et al actually don't do the MR Steiger directionality test, they use the per-SNP Steiger filtering approach. Only 6 of the 8 SNPs they used are available for analysis here. 
+
+```{r}
+d2 <- steiger_filtering(d2)
+a <- d2 %>%
+  select(SNP, chr, pos, pval.exposure, rsq.exposure, rsq.outcome, steiger_dir, steiger_pval) %>%
+  arrange(chr, pos)
+b <- mr_singlesnp(d2) %>% select(SNP, b, se)
+a <- inner_join(b, a, by="SNP")
+a
+```
+
+Summary:
+
+- The SNP-exposure associations are not particularly strong, and the SNP-exposure R-square values are rather small
+- In all cases still the Steiger direction is from exposure to outcome
+- The Steiger p-values are modest and this can be interpreted as being due to low power given the weak SNP-exposure associations. When power is good then an inconclusive Steiger p-value could be used to indicate correlated pleiotropy.
 
 ### Former / current smokers vs FEV1 using UK Biobank
 
@@ -228,4 +255,18 @@ tibble(
 
 - Smoking behaviours have a causal influence on lung function (FEV1), where higher smoking relates to poorer lung function
 - The causal direction is consistently from smoking behaviour to lung function
+
+
+## LD between Lutz SNPs
+
+It seems like many of the SNPs are very close to each other. 
+
+```{r}
+ld <- ld_matrix(lutz_rs)
+ld
+
+
+```
+
+They are not independent.
 

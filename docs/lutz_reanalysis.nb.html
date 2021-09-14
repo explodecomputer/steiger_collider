@@ -1763,8 +1763,12 @@ summary {
 
 
 <!-- rnb-text-begin -->
+<p>The source code for this document is available at: <a href="https://github.com/explodecomputer/steiger_collider/blob/main/docs/lutz_reanalysis.rmd" class="uri">https://github.com/explodecomputer/steiger_collider/blob/main/docs/lutz_reanalysis.rmd</a></p>
+<hr />
+<div id="background" class="section level2">
+<h2>Background</h2>
 <p>Lutz et al 2021 suggest that the MR Steiger test will lead to the incorrect causal direction for smoking status (current vs former) on lung function (FEV). Presumably the hypothesis is that going from current to former should have a positive causal influence on FEV, and that FEV should not have a causal influence on going from current to former.</p>
-<p>Lutz et al report the Steiger test result of the causal direction of FEV -&gt; smoking status, and that this indicates horizontal pleiotropy is biasing the result.</p>
+<p>Lutz et al report the Steiger test result of the causal direction of FEV1 -&gt; smoking status, and that this indicates horizontal pleiotropy is biasing the result.</p>
 <p>Objectives:</p>
 <ol style="list-style-type: decimal">
 <li>Can sample selection distort the MR Steiger method?</li>
@@ -1772,24 +1776,24 @@ summary {
 </ol>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VwcHJlc3NNZXNzYWdlcyhzdXBwcmVzc1BhY2thZ2VTdGFydHVwTWVzc2FnZXMoc3VwcHJlc3NXYXJuaW5ncyh7XG5saWJyYXJ5KFR3b1NhbXBsZU1SKVxubGlicmFyeShpZXVnd2FzcilcbmxpYnJhcnkodGlkeXZlcnNlKVxubGlicmFyeShzaW11bGF0ZUdQKVxubGlicmFyeShrbml0cilcbn0pKSlcbmtuaXRyOjpvcHRzX2NodW5rJHNldCh3YXJuaW5nPUZBTFNFKVxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjpbInN1cHByZXNzTWVzc2FnZXMoc3VwcHJlc3NQYWNrYWdlU3RhcnR1cE1lc3NhZ2VzKHN1cHByZXNzV2FybmluZ3Moe1xuICBsaWJyYXJ5KFR3b1NhbXBsZU1SKVxuICBsaWJyYXJ5KGlldWd3YXNyKVxuICBsaWJyYXJ5KHRpZHl2ZXJzZSlcbiAgbGlicmFyeShrbml0cilcbn0pKSkiLCJrbml0cjo6b3B0c19jaHVuayRzZXQod2FybmluZz1GQUxTRSkiXX0= -->
 <pre class="r"><code>suppressMessages(suppressPackageStartupMessages(suppressWarnings({
-library(TwoSampleMR)
-library(ieugwasr)
-library(tidyverse)
-library(simulateGP)
-library(knitr)
+  library(TwoSampleMR)
+  library(ieugwasr)
+  library(tidyverse)
+  library(knitr)
 })))
 knitr::opts_chunk$set(warning=FALSE)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+</div>
 <div id="can-sample-selection-distort-the-mr-steiger-method" class="section level2">
 <h2>Can sample selection distort the MR Steiger method?</h2>
 <p>Here is a simple numerical example where conditioning on the exposure leads to the wrong direction. There is an instrument for the exposure, the exposure influences the outcome, and there is a confounder for the exposure and outcome</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubiA8LSAxMDAwMDBcbml2IDwtIHJub3JtKG4pICsgMVxudSA8LSBybm9ybShuKVxuZXhwb3N1cmUgPC0gaXYgKiAwLjUgKyBybm9ybShuKSArIHUgKiAtMlxub3V0Y29tZSA8LSBleHBvc3VyZSAqIDAuNSArIHJub3JtKG4pICsgMiAqIHVcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjpbIm4gPC0gMTAwMDAwIiwiaXYgPC0gcm5vcm0obikgKyAxIiwidSA8LSBybm9ybShuKSIsImV4cG9zdXJlIDwtIGl2ICogMC41ICsgcm5vcm0obikgKyB1ICogLTIiLCJvdXRjb21lIDwtIGV4cG9zdXJlICogMC41ICsgcm5vcm0obikgKyAyICogdSJdfQ== -->
 <pre class="r"><code>n &lt;- 100000
 iv &lt;- rnorm(n) + 1
 u &lt;- rnorm(n)
@@ -1801,41 +1805,41 @@ outcome &lt;- exposure * 0.5 + rnorm(n) + 2 * u</code></pre>
 <p>In the MR Steiger analysis of the complete data the direction is correct</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKGl2LCBleHBvc3VyZSleMlxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGl2LCBleHBvc3VyZSleMiJ9 -->
 <pre class="r"><code>cor(iv, exposure)^2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ2NzEyMTRcbiJ9 -->
-<pre><code>[1] 0.04671214</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ3NjI2NjdcbiJ9 -->
+<pre><code>[1] 0.04762667</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKGl2LCBvdXRjb21lKV4yXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGl2LCBvdXRjb21lKV4yIn0= -->
 <pre class="r"><code>cor(iv, outcome)^2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDI3MTUyODlcbiJ9 -->
-<pre><code>[1] 0.02715289</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDI2NDk1MTJcbiJ9 -->
+<pre><code>[1] 0.02649512</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>In the selected sample, using only individuals with a high exposure, the variance in the exposure has been restricted and the rsq is higher for the outcome than the exposure</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKGl2W2V4cG9zdXJlPj0xXSwgZXhwb3N1cmVbZXhwb3N1cmU+PTFdKV4yXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGl2W2V4cG9zdXJlPj0xXSwgZXhwb3N1cmVbZXhwb3N1cmU+PTFdKV4yIn0= -->
 <pre class="r"><code>cor(iv[exposure&gt;=1], exposure[exposure&gt;=1])^2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDE2NDI2MTVcbiJ9 -->
-<pre><code>[1] 0.01642615</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDE3MzEyMlxuIn0= -->
+<pre><code>[1] 0.0173122</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKGl2W2V4cG9zdXJlPj0xXSwgb3V0Y29tZVtleHBvc3VyZT49MV0pXjJcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGl2W2V4cG9zdXJlPj0xXSwgb3V0Y29tZVtleHBvc3VyZT49MV0pXjIifQ== -->
 <pre class="r"><code>cor(iv[exposure&gt;=1], outcome[exposure&gt;=1])^2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDU4MzI0NDJcbiJ9 -->
-<pre><code>[1] 0.05832442</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDU2MDU5OVxuIn0= -->
+<pre><code>[1] 0.0560599</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>What about collider bias? Now the exposure and outcome both influence sample selection</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubiA8LSAxMDAwMDBcbml2IDwtIHJub3JtKG4pICsgMVxudSA8LSBybm9ybShuKVxuZXhwb3N1cmUgPC0gaXYgKiAwLjUgKyBybm9ybShuKSArIHUgKiAtMlxub3V0Y29tZSA8LSBleHBvc3VyZSAqIDAuNSArIHJub3JtKG4pICsgMiAqIHVcbmNvbGxpZGVyIDwtIGV4cG9zdXJlICsgb3V0Y29tZVxuc2VsZWN0ZWQgPC0gY29sbGlkZXIgPiBtZWRpYW4oY29sbGlkZXIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjpbIm4gPC0gMTAwMDAwIiwiaXYgPC0gcm5vcm0obikgKyAxIiwidSA8LSBybm9ybShuKSIsImV4cG9zdXJlIDwtIGl2ICogMC41ICsgcm5vcm0obikgKyB1ICogLTIiLCJvdXRjb21lIDwtIGV4cG9zdXJlICogMC41ICsgcm5vcm0obikgKyAyICogdSIsImNvbGxpZGVyIDwtIGV4cG9zdXJlICsgb3V0Y29tZSIsInNlbGVjdGVkIDwtIGNvbGxpZGVyID4gbWVkaWFuKGNvbGxpZGVyKSJdfQ== -->
 <pre class="r"><code>n &lt;- 100000
 iv &lt;- rnorm(n) + 1
 u &lt;- rnorm(n)
@@ -1849,34 +1853,34 @@ selected &lt;- collider &gt; median(collider)</code></pre>
 <p>In the complete sample the MR Steiger method is correct</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKGl2LCBleHBvc3VyZSleMlxuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGl2LCBleHBvc3VyZSleMiJ9 -->
 <pre class="r"><code>cor(iv, exposure)^2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ3MTg2ODJcbiJ9 -->
-<pre><code>[1] 0.04718682</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDQ5MjUwNFxuIn0= -->
+<pre><code>[1] 0.0492504</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKGl2LCBvdXRjb21lKV4yXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGl2LCBvdXRjb21lKV4yIn0= -->
 <pre class="r"><code>cor(iv, outcome)^2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDI1NDE0MTJcbiJ9 -->
-<pre><code>[1] 0.02541412</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDI2NzU0MDVcbiJ9 -->
+<pre><code>[1] 0.02675405</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>In the selected sample the causal direction appears reverse</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKGl2W3NlbGVjdGVkXSwgZXhwb3N1cmVbc2VsZWN0ZWRdKV4yXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGl2W3NlbGVjdGVkXSwgZXhwb3N1cmVbc2VsZWN0ZWRdKV4yIn0= -->
 <pre class="r"><code>cor(iv[selected], exposure[selected])^2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDAzOTQzMDU2XG4ifQ== -->
-<pre><code>[1] 0.003943056</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDA2MDg2ODNcbiJ9 -->
+<pre><code>[1] 0.00608683</code></pre>
 <!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKGl2W3NlbGVjdGVkXSwgb3V0Y29tZVtzZWxlY3RlZF0pXjJcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiY29yKGl2W3NlbGVjdGVkXSwgb3V0Y29tZVtzZWxlY3RlZF0pXjIifQ== -->
 <pre class="r"><code>cor(iv[selected], outcome[selected])^2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDExMzM0MTRcbiJ9 -->
-<pre><code>[1] 0.01133414</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDAuMDExNTY4MjdcbiJ9 -->
+<pre><code>[1] 0.01156827</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -1894,9 +1898,30 @@ selected &lt;- collider &gt; median(collider)</code></pre>
 <p>FEV1:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ3dhc2luZm8oXCJ1a2ItYi0xOTY1N1wiKSAlPiUgc3RyKClcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiZ3dhc2luZm8oXCJ1a2ItYi0xOTY1N1wiKSAlPiUgc3RyKCkifQ== -->
 <pre class="r"><code>gwasinfo(&quot;ukb-b-19657&quot;) %&gt;% str()</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyAnR3dhc0luZm8nIGFuZCAnZGF0YS5mcmFtZSc6XHQxIG9icy4gb2YgIDE4IHZhcmlhYmxlczpcbiAkIGlkICAgICAgICAgOiBjaHIgXCJ1a2ItYi0xOTY1N1wiXG4gJCB0cmFpdCAgICAgIDogY2hyIFwiRm9yY2VkIGV4cGlyYXRvcnkgdm9sdW1lIGluIDEtc2Vjb25kIChGRVYxKVwiXG4gJCB1bml0ICAgICAgIDogY2hyIFwiU0RcIlxuICQgYnVpbGQgICAgICA6IGNociBcIkhHMTkvR1JDaDM3XCJcbiAkIHllYXIgICAgICAgOiBpbnQgMjAxOFxuICQgZ3JvdXBfbmFtZSA6IGNociBcInB1YmxpY1wiXG4gJCBzYW1wbGVfc2l6ZTogaW50IDQyMTk4NlxuICQgc2V4ICAgICAgICA6IGNociBcIk1hbGVzIGFuZCBGZW1hbGVzXCJcbiAkIGNvbnNvcnRpdW0gOiBjaHIgXCJNUkMtSUVVXCJcbiAkIGNhdGVnb3J5ICAgOiBjaHIgXCJDb250aW51b3VzXCJcbiAkIGF1dGhvciAgICAgOiBjaHIgXCJCZW4gRWxzd29ydGhcIlxuICQgb250b2xvZ3kgICA6IGxvZ2kgTkFcbiAkIG5vdGUgICAgICAgOiBjaHIgXCIzMDYzOiBPdXRwdXQgZnJvbSBHV0FTIHBpcGVsaW5lIHVzaW5nIFBoZXNhbnQgZGVyaXZlZCB2YXJpYWJsZXMgZnJvbSBVS0Jpb2JhbmtcIlxuICQgcHJpb3JpdHkgICA6IGludCAxXG4gJCBzdWJjYXRlZ29yeTogbG9naSBOQVxuICQgcG9wdWxhdGlvbiA6IGNociBcIkV1cm9wZWFuXCJcbiAkIG5zbnAgICAgICAgOiBpbnQgOTg1MTg2N1xuICQgbXIgICAgICAgICA6IGludCAxXG4ifQ== -->
+<pre><code>Classes &#39;GwasInfo&#39; and &#39;data.frame&#39;:    1 obs. of  18 variables:
+ $ id         : chr &quot;ukb-b-19657&quot;
+ $ trait      : chr &quot;Forced expiratory volume in 1-second (FEV1)&quot;
+ $ unit       : chr &quot;SD&quot;
+ $ build      : chr &quot;HG19/GRCh37&quot;
+ $ year       : int 2018
+ $ group_name : chr &quot;public&quot;
+ $ sample_size: int 421986
+ $ sex        : chr &quot;Males and Females&quot;
+ $ consortium : chr &quot;MRC-IEU&quot;
+ $ category   : chr &quot;Continuous&quot;
+ $ author     : chr &quot;Ben Elsworth&quot;
+ $ ontology   : logi NA
+ $ note       : chr &quot;3063: Output from GWAS pipeline using Phesant derived variables from UKBiobank&quot;
+ $ priority   : int 1
+ $ subcategory: logi NA
+ $ population : chr &quot;European&quot;
+ $ nsnp       : int 9851867
+ $ mr         : int 1</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Use various smoking behaviour traits as exposure.</p>
@@ -1904,58 +1929,52 @@ selected &lt;- collider &gt; median(collider)</code></pre>
 <h3>Ever / never smokers on FEV1</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ3dhc2luZm8oXCJ1a2ItYi0yMDI2MVwiKSAlPiUgc3RyKClcblxuYGBgIn0= -->
-<pre class="r"><code>gwasinfo(&quot;ukb-b-20261&quot;) %&gt;% str()
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiZ3dhc2luZm8oXCJ1a2ItYi0yMDI2MVwiKSAlPiUgc3RyKCkifQ== -->
+<pre class="r"><code>gwasinfo(&quot;ukb-b-20261&quot;) %&gt;% str()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiU2VydmVyIGNvZGU6IDUwMjsgU2VydmVyIGlzIHBvc3NpYmx5IGV4cGVyaWVuY2luZyB0cmFmZmljLCB0cnlpbmcgYWdhaW4uLi5cblJldHJ5IHN1Y2NlZWRlZCFcbiJ9 -->
-<pre><code>Server code: 502; Server is possibly experiencing traffic, trying again...
-Retry succeeded!</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyDigJhHd2FzSW5mb+KAmSBhbmQgJ2RhdGEuZnJhbWUnOlx0MSBvYnMuIG9mICAyMCB2YXJpYWJsZXM6XG4gJCBpZCAgICAgICAgIDogY2hyIFwidWtiLWItMjAyNjFcIlxuICQgdHJhaXQgICAgICA6IGNociBcIkV2ZXIgc21va2VkXCJcbiAkIG5vdGUgICAgICAgOiBjaHIgXCIyMDE2MDogT3V0cHV0IGZyb20gR1dBUyBwaXBlbGluZSB1c2luZyBQaGVzYW50IGRlcml2ZWQgdmFyaWFibGVzIGZyb20gVUtCaW9iYW5rXCJcbiAkIHN1YmNhdGVnb3J5OiBsb2dpIE5BXG4gJCBjb25zb3J0aXVtIDogY2hyIFwiTVJDLUlFVVwiXG4gJCB5ZWFyICAgICAgIDogaW50IDIwMThcbiAkIHVuaXQgICAgICAgOiBjaHIgXCJTRFwiXG4gJCBhdXRob3IgICAgIDogY2hyIFwiQmVuIEVsc3dvcnRoXCJcbiAkIG1yICAgICAgICAgOiBpbnQgMVxuICQgb250b2xvZ3kgICA6IGxvZ2kgTkFcbiAkIHNhbXBsZV9zaXplOiBpbnQgNDYxMDY2XG4gJCBjYXRlZ29yeSAgIDogY2hyIFwiQmluYXJ5XCJcbiAkIGdyb3VwX25hbWUgOiBjaHIgXCJwdWJsaWNcIlxuICQgc2V4ICAgICAgICA6IGNociBcIk1hbGVzIGFuZCBGZW1hbGVzXCJcbiAkIG5jb250cm9sICAgOiBpbnQgMTgwNTU4XG4gJCBwcmlvcml0eSAgIDogaW50IDFcbiAkIG5jYXNlICAgICAgOiBpbnQgMjgwNTA4XG4gJCBuc25wICAgICAgIDogaW50IDk4NTE4NjdcbiAkIGJ1aWxkICAgICAgOiBjaHIgXCJIRzE5L0dSQ2gzN1wiXG4gJCBwb3B1bGF0aW9uIDogY2hyIFwiRXVyb3BlYW5cIlxuIn0= -->
-<pre><code>Classes ‘GwasInfo’ and &#39;data.frame&#39;:    1 obs. of  20 variables:
+<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyAnR3dhc0luZm8nIGFuZCAnZGF0YS5mcmFtZSc6XHQxIG9icy4gb2YgIDIwIHZhcmlhYmxlczpcbiAkIGlkICAgICAgICAgOiBjaHIgXCJ1a2ItYi0yMDI2MVwiXG4gJCB0cmFpdCAgICAgIDogY2hyIFwiRXZlciBzbW9rZWRcIlxuICQgdW5pdCAgICAgICA6IGNociBcIlNEXCJcbiAkIGJ1aWxkICAgICAgOiBjaHIgXCJIRzE5L0dSQ2gzN1wiXG4gJCB5ZWFyICAgICAgIDogaW50IDIwMThcbiAkIGdyb3VwX25hbWUgOiBjaHIgXCJwdWJsaWNcIlxuICQgc2FtcGxlX3NpemU6IGludCA0NjEwNjZcbiAkIHNleCAgICAgICAgOiBjaHIgXCJNYWxlcyBhbmQgRmVtYWxlc1wiXG4gJCBjb25zb3J0aXVtIDogY2hyIFwiTVJDLUlFVVwiXG4gJCBjYXRlZ29yeSAgIDogY2hyIFwiQmluYXJ5XCJcbiAkIG5jb250cm9sICAgOiBpbnQgMTgwNTU4XG4gJCBhdXRob3IgICAgIDogY2hyIFwiQmVuIEVsc3dvcnRoXCJcbiAkIG9udG9sb2d5ICAgOiBsb2dpIE5BXG4gJCBub3RlICAgICAgIDogY2hyIFwiMjAxNjA6IE91dHB1dCBmcm9tIEdXQVMgcGlwZWxpbmUgdXNpbmcgUGhlc2FudCBkZXJpdmVkIHZhcmlhYmxlcyBmcm9tIFVLQmlvYmFua1wiXG4gJCBwcmlvcml0eSAgIDogaW50IDFcbiAkIHN1YmNhdGVnb3J5OiBsb2dpIE5BXG4gJCBwb3B1bGF0aW9uIDogY2hyIFwiRXVyb3BlYW5cIlxuICQgbnNucCAgICAgICA6IGludCA5ODUxODY3XG4gJCBtciAgICAgICAgIDogaW50IDFcbiAkIG5jYXNlICAgICAgOiBpbnQgMjgwNTA4XG4ifQ== -->
+<pre><code>Classes &#39;GwasInfo&#39; and &#39;data.frame&#39;:    1 obs. of  20 variables:
  $ id         : chr &quot;ukb-b-20261&quot;
  $ trait      : chr &quot;Ever smoked&quot;
- $ note       : chr &quot;20160: Output from GWAS pipeline using Phesant derived variables from UKBiobank&quot;
- $ subcategory: logi NA
- $ consortium : chr &quot;MRC-IEU&quot;
- $ year       : int 2018
  $ unit       : chr &quot;SD&quot;
- $ author     : chr &quot;Ben Elsworth&quot;
- $ mr         : int 1
- $ ontology   : logi NA
- $ sample_size: int 461066
- $ category   : chr &quot;Binary&quot;
- $ group_name : chr &quot;public&quot;
- $ sex        : chr &quot;Males and Females&quot;
- $ ncontrol   : int 180558
- $ priority   : int 1
- $ ncase      : int 280508
- $ nsnp       : int 9851867
  $ build      : chr &quot;HG19/GRCh37&quot;
- $ population : chr &quot;European&quot;</code></pre>
+ $ year       : int 2018
+ $ group_name : chr &quot;public&quot;
+ $ sample_size: int 461066
+ $ sex        : chr &quot;Males and Females&quot;
+ $ consortium : chr &quot;MRC-IEU&quot;
+ $ category   : chr &quot;Binary&quot;
+ $ ncontrol   : int 180558
+ $ author     : chr &quot;Ben Elsworth&quot;
+ $ ontology   : logi NA
+ $ note       : chr &quot;20160: Output from GWAS pipeline using Phesant derived variables from UKBiobank&quot;
+ $ priority   : int 1
+ $ subcategory: logi NA
+ $ population : chr &quot;European&quot;
+ $ nsnp       : int 9851867
+ $ mr         : int 1
+ $ ncase      : int 280508</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDAgPC0gbWFrZV9kYXQoXCJ1a2ItYi0yMDI2MVwiLCBcInVrYi1iLTE5NjU3XCIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiZDAgPC0gbWFrZV9kYXQoXCJ1a2ItYi0yMDI2MVwiLCBcInVrYi1iLTE5NjU3XCIpIn0= -->
 <pre class="r"><code>d0 &lt;- make_dat(&quot;ukb-b-20261&quot;, &quot;ukb-b-19657&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciA4NCBTTlAocykgZnJvbSAxIEdXQVMocylcbkhhcm1vbmlzaW5nIEV2ZXIgc21va2VkIHx8IGlkOnVrYi1iLTIwMjYxICh1a2ItYi0yMDI2MSkgYW5kIEZvcmNlZCBleHBpcmF0b3J5IHZvbHVtZSBpbiAxLXNlY29uZCAoRkVWMSkgfHwgaWQ6dWtiLWItMTk2NTcgKHVrYi1iLTE5NjU3KVxuIn0= -->
-<pre><code>Extracting data for 84 SNP(s) from 1 GWAS(s)
-Harmonising Ever smoked || id:ukb-b-20261 (ukb-b-20261) and Forced expiratory volume in 1-second (FEV1) || id:ukb-b-19657 (ukb-b-19657)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzMCA8LSBtcihkMClcbmBgYCJ9 -->
+<!-- rnb-message-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciA4NCBTTlAocykgZnJvbSAxIEdXQVMocylcbiJ9 -->
+<pre><code>Extracting data for 84 SNP(s) from 1 GWAS(s)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiSGFybW9uaXNpbmcgRXZlciBzbW9rZWQgfHwgaWQ6dWtiLWItMjAyNjEgKHVrYi1iLTIwMjYxKSBhbmQgRm9yY2VkIGV4cGlyYXRvcnkgdm9sdW1lIGluIDEtc2Vjb25kIChGRVYxKSB8fCBpZDp1a2ItYi0xOTY1NyAodWtiLWItMTk2NTcpXG4ifQ== -->
+<pre><code>Harmonising Ever smoked || id:ukb-b-20261 (ukb-b-20261) and Forced expiratory volume in 1-second (FEV1) || id:ukb-b-19657 (ukb-b-19657)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoicmVzMCA8LSBtcihkMCkifQ== -->
 <pre class="r"><code>res0 &lt;- mr(d0)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQW5hbHlzaW5nICd1a2ItYi0yMDI2MScgb24gJ3VrYi1iLTE5NjU3J1xuIn0= -->
+<!-- rnb-message-begin eyJkYXRhIjoiQW5hbHlzaW5nICd1a2ItYi0yMDI2MScgb24gJ3VrYi1iLTE5NjU3J1xuIn0= -->
 <pre><code>Analysing &#39;ukb-b-20261&#39; on &#39;ukb-b-19657&#39;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua2FibGUocmVzMClcbmBgYCJ9 -->
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoia2FibGUocmVzMCkifQ== -->
 <pre class="r"><code>kable(res0)</code></pre>
 <!-- rnb-source-end -->
-
-<!-- rnb-html-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImtuaXRfYXNpcyJdLCJzaXppbmdQb2xpY3kiOltdfX0= -->
-
 <table>
 <colgroup>
 <col width="6%"></col>
@@ -2001,8 +2020,8 @@ Harmonising Ever smoked || id:ukb-b-20261 (ukb-b-20261) and Forced expiratory vo
 <td align="left">Weighted median</td>
 <td align="right">84</td>
 <td align="right">-0.1007902</td>
-<td align="right">0.0565976</td>
-<td align="right">0.0749417</td>
+<td align="right">0.0556869</td>
+<td align="right">0.0703043</td>
 </tr>
 <tr class="odd">
 <td align="left">ukb-b-20261</td>
@@ -2023,8 +2042,8 @@ Harmonising Ever smoked || id:ukb-b-20261 (ukb-b-20261) and Forced expiratory vo
 <td align="left">Simple mode</td>
 <td align="right">84</td>
 <td align="right">0.0036499</td>
-<td align="right">0.1865610</td>
-<td align="right">0.9844379</td>
+<td align="right">0.1680433</td>
+<td align="right">0.9827233</td>
 </tr>
 <tr class="odd">
 <td align="left">ukb-b-20261</td>
@@ -2034,28 +2053,26 @@ Harmonising Ever smoked || id:ukb-b-20261 (ukb-b-20261) and Forced expiratory vo
 <td align="left">Weighted mode</td>
 <td align="right">84</td>
 <td align="right">-0.0871371</td>
-<td align="right">0.1336863</td>
-<td align="right">0.5163291</td>
+<td align="right">0.1261900</td>
+<td align="right">0.4917917</td>
 </tr>
 </tbody>
 </table>
-
-
-<!-- rnb-html-end -->
-
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Directionality test</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuczAgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMCkgXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiczAgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMCkgIn0= -->
 <pre class="r"><code>s0 &lt;- directionality_test(d0) </code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoici5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIG5vdCBwcmVzZW50LlxuQ2FsY3VsYXRpbmcgYXBwcm94aW1hdGUgU05QLWV4cG9zdXJlIGFuZC9vciBTTlAtb3V0Y29tZSBjb3JyZWxhdGlvbnMsIGFzc3VtaW5nIGFsbCBhcmUgcXVhbnRpdGF0aXZlIHRyYWl0cy4gUGxlYXNlIHByZS1jYWxjdWxhdGUgci5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIHVzaW5nIGdldF9yX2Zyb21fbG9yKCkgZm9yIGFueSBiaW5hcnkgdHJhaXRzXG4ifQ== -->
-<pre><code>r.exposure and/or r.outcome not present.
-Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming all are quantitative traits. Please pre-calculate r.exposure and/or r.outcome using get_r_from_lor() for any binary traits</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKHMwKVxuYGBgIn0= -->
+<!-- rnb-message-begin eyJkYXRhIjoici5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIG5vdCBwcmVzZW50LlxuIn0= -->
+<pre><code>r.exposure and/or r.outcome not present.</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiQ2FsY3VsYXRpbmcgYXBwcm94aW1hdGUgU05QLWV4cG9zdXJlIGFuZC9vciBTTlAtb3V0Y29tZSBjb3JyZWxhdGlvbnMsIGFzc3VtaW5nIGFsbCBhcmUgcXVhbnRpdGF0aXZlIHRyYWl0cy4gUGxlYXNlIHByZS1jYWxjdWxhdGUgci5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIHVzaW5nIGdldF9yX2Zyb21fbG9yKCkgZm9yIGFueSBiaW5hcnkgdHJhaXRzXG4ifQ== -->
+<pre><code>Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming all are quantitative traits. Please pre-calculate r.exposure and/or r.outcome using get_r_from_lor() for any binary traits</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoic3RyKHMwKSJ9 -->
 <pre class="r"><code>str(s0)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0MSBvYnMuIG9mICA4IHZhcmlhYmxlczpcbiAkIGlkLmV4cG9zdXJlICAgICAgICAgICAgIDogY2hyIFwidWtiLWItMjAyNjFcIlxuICQgaWQub3V0Y29tZSAgICAgICAgICAgICAgOiBjaHIgXCJ1a2ItYi0xOTY1N1wiXG4gJCBleHBvc3VyZSAgICAgICAgICAgICAgICA6IGNociBcIkV2ZXIgc21va2VkIHx8IGlkOnVrYi1iLTIwMjYxXCJcbiAkIG91dGNvbWUgICAgICAgICAgICAgICAgIDogY2hyIFwiRm9yY2VkIGV4cGlyYXRvcnkgdm9sdW1lIGluIDEtc2Vjb25kIChGRVYxKSB8fCBpZDp1a2ItYi0xOTY1N1wiXG4gJCBzbnBfcjIuZXhwb3N1cmUgICAgICAgICA6IG51bSAwLjAwNzI0XG4gJCBzbnBfcjIub3V0Y29tZSAgICAgICAgICA6IG51bSAwLjAwMDgwNFxuICQgY29ycmVjdF9jYXVzYWxfZGlyZWN0aW9uOiBsb2dpIFRSVUVcbiAkIHN0ZWlnZXJfcHZhbCAgICAgICAgICAgIDogbnVtIDIuM2UtMTU3XG4ifQ== -->
@@ -2078,55 +2095,54 @@ Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming a
 <p>Cigarettes smoked per day:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ3dhc2luZm8oXCJpZXUtYi0yNVwiKSAlPiUgc3RyKClcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiZ3dhc2luZm8oXCJpZXUtYi0yNVwiKSAlPiUgc3RyKCkifQ== -->
 <pre class="r"><code>gwasinfo(&quot;ieu-b-25&quot;) %&gt;% str()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyDigJhHd2FzSW5mb+KAmSBhbmQgJ2RhdGEuZnJhbWUnOlx0MSBvYnMuIG9mICAxOSB2YXJpYWJsZXM6XG4gJCBpZCAgICAgICAgIDogY2hyIFwiaWV1LWItMjVcIlxuICQgdHJhaXQgICAgICA6IGNociBcIkNpZ2FyZXR0ZXMgcGVyIERheVwiXG4gJCBub3RlICAgICAgIDogbG9naSBOQVxuICQgc3ViY2F0ZWdvcnk6IGNociBcIkJlaGF2aW91cmFsXCJcbiAkIGNvbnNvcnRpdW0gOiBjaHIgXCJHV0FTIGFuZCBTZXF1ZW5jaW5nIENvbnNvcnRpdW0gb2YgQWxjb2hvbCBhbmQgTmljb3RpbmUgdXNlXCJcbiAkIHllYXIgICAgICAgOiBpbnQgMjAxOVxuICQgdW5pdCAgICAgICA6IGxvZ2kgTkFcbiAkIGF1dGhvciAgICAgOiBjaHIgXCJMaXUsIE1cIlxuICQgbXIgICAgICAgICA6IGludCAxXG4gJCBvbnRvbG9neSAgIDogbG9naSBOQVxuICQgc2FtcGxlX3NpemU6IGludCAzMzczMzRcbiAkIGNhdGVnb3J5ICAgOiBjaHIgXCJDb250aW51b3VzXCJcbiAkIGdyb3VwX25hbWUgOiBjaHIgXCJwdWJsaWNcIlxuICQgc2V4ICAgICAgICA6IGNociBcIk1hbGVzIGFuZCBGZW1hbGVzXCJcbiAkIHByaW9yaXR5ICAgOiBpbnQgMVxuICQgbnNucCAgICAgICA6IGludCAxMTkxMzcxMlxuICQgYnVpbGQgICAgICA6IGNociBcIkhHMTkvR1JDaDM3XCJcbiAkIHBtaWQgICAgICAgOiBpbnQgMzA2NDMyNTFcbiAkIHBvcHVsYXRpb24gOiBjaHIgXCJFdXJvcGVhblwiXG4ifQ== -->
-<pre><code>Classes ‘GwasInfo’ and &#39;data.frame&#39;:    1 obs. of  19 variables:
+<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyAnR3dhc0luZm8nIGFuZCAnZGF0YS5mcmFtZSc6XHQxIG9icy4gb2YgIDE5IHZhcmlhYmxlczpcbiAkIGlkICAgICAgICAgOiBjaHIgXCJpZXUtYi0yNVwiXG4gJCB0cmFpdCAgICAgIDogY2hyIFwiQ2lnYXJldHRlcyBwZXIgRGF5XCJcbiAkIHVuaXQgICAgICAgOiBsb2dpIE5BXG4gJCBidWlsZCAgICAgIDogY2hyIFwiSEcxOS9HUkNoMzdcIlxuICQgeWVhciAgICAgICA6IGludCAyMDE5XG4gJCBncm91cF9uYW1lIDogY2hyIFwicHVibGljXCJcbiAkIHNhbXBsZV9zaXplOiBpbnQgMzM3MzM0XG4gJCBzZXggICAgICAgIDogY2hyIFwiTWFsZXMgYW5kIEZlbWFsZXNcIlxuICQgY29uc29ydGl1bSA6IGNociBcIkdXQVMgYW5kIFNlcXVlbmNpbmcgQ29uc29ydGl1bSBvZiBBbGNvaG9sIGFuZCBOaWNvdGluZSB1c2VcIlxuICQgY2F0ZWdvcnkgICA6IGNociBcIkNvbnRpbnVvdXNcIlxuICQgcG1pZCAgICAgICA6IGludCAzMDY0MzI1MVxuICQgYXV0aG9yICAgICA6IGNociBcIkxpdSwgTVwiXG4gJCBvbnRvbG9neSAgIDogbG9naSBOQVxuICQgbm90ZSAgICAgICA6IGxvZ2kgTkFcbiAkIHByaW9yaXR5ICAgOiBpbnQgMVxuICQgc3ViY2F0ZWdvcnk6IGNociBcIkJlaGF2aW91cmFsXCJcbiAkIHBvcHVsYXRpb24gOiBjaHIgXCJFdXJvcGVhblwiXG4gJCBuc25wICAgICAgIDogaW50IDExOTEzNzEyXG4gJCBtciAgICAgICAgIDogaW50IDFcbiJ9 -->
+<pre><code>Classes &#39;GwasInfo&#39; and &#39;data.frame&#39;:    1 obs. of  19 variables:
  $ id         : chr &quot;ieu-b-25&quot;
  $ trait      : chr &quot;Cigarettes per Day&quot;
- $ note       : logi NA
- $ subcategory: chr &quot;Behavioural&quot;
- $ consortium : chr &quot;GWAS and Sequencing Consortium of Alcohol and Nicotine use&quot;
- $ year       : int 2019
  $ unit       : logi NA
- $ author     : chr &quot;Liu, M&quot;
- $ mr         : int 1
- $ ontology   : logi NA
- $ sample_size: int 337334
- $ category   : chr &quot;Continuous&quot;
- $ group_name : chr &quot;public&quot;
- $ sex        : chr &quot;Males and Females&quot;
- $ priority   : int 1
- $ nsnp       : int 11913712
  $ build      : chr &quot;HG19/GRCh37&quot;
+ $ year       : int 2019
+ $ group_name : chr &quot;public&quot;
+ $ sample_size: int 337334
+ $ sex        : chr &quot;Males and Females&quot;
+ $ consortium : chr &quot;GWAS and Sequencing Consortium of Alcohol and Nicotine use&quot;
+ $ category   : chr &quot;Continuous&quot;
  $ pmid       : int 30643251
- $ population : chr &quot;European&quot;</code></pre>
+ $ author     : chr &quot;Liu, M&quot;
+ $ ontology   : logi NA
+ $ note       : logi NA
+ $ priority   : int 1
+ $ subcategory: chr &quot;Behavioural&quot;
+ $ population : chr &quot;European&quot;
+ $ nsnp       : int 11913712
+ $ mr         : int 1</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>MR analysis:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDEgPC0gbWFrZV9kYXQoXCJpZXUtYi0yNVwiLCBcInVrYi1iLTE5NjU3XCIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiZDEgPC0gbWFrZV9kYXQoXCJpZXUtYi0yNVwiLCBcInVrYi1iLTE5NjU3XCIpIn0= -->
 <pre class="r"><code>d1 &lt;- make_dat(&quot;ieu-b-25&quot;, &quot;ukb-b-19657&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciAyMyBTTlAocykgZnJvbSAxIEdXQVMocylcbkhhcm1vbmlzaW5nIENpZ2FyZXR0ZXMgcGVyIERheSB8fCBpZDppZXUtYi0yNSAoaWV1LWItMjUpIGFuZCBGb3JjZWQgZXhwaXJhdG9yeSB2b2x1bWUgaW4gMS1zZWNvbmQgKEZFVjEpIHx8IGlkOnVrYi1iLTE5NjU3ICh1a2ItYi0xOTY1NylcbiJ9 -->
-<pre><code>Extracting data for 23 SNP(s) from 1 GWAS(s)
-Harmonising Cigarettes per Day || id:ieu-b-25 (ieu-b-25) and Forced expiratory volume in 1-second (FEV1) || id:ukb-b-19657 (ukb-b-19657)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzMSA8LSBtcihkMSlcbmBgYCJ9 -->
+<!-- rnb-message-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciAyMyBTTlAocykgZnJvbSAxIEdXQVMocylcbiJ9 -->
+<pre><code>Extracting data for 23 SNP(s) from 1 GWAS(s)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiSGFybW9uaXNpbmcgQ2lnYXJldHRlcyBwZXIgRGF5IHx8IGlkOmlldS1iLTI1IChpZXUtYi0yNSkgYW5kIEZvcmNlZCBleHBpcmF0b3J5IHZvbHVtZSBpbiAxLXNlY29uZCAoRkVWMSkgfHwgaWQ6dWtiLWItMTk2NTcgKHVrYi1iLTE5NjU3KVxuIn0= -->
+<pre><code>Harmonising Cigarettes per Day || id:ieu-b-25 (ieu-b-25) and Forced expiratory volume in 1-second (FEV1) || id:ukb-b-19657 (ukb-b-19657)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoicmVzMSA8LSBtcihkMSkifQ== -->
 <pre class="r"><code>res1 &lt;- mr(d1)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQW5hbHlzaW5nICdpZXUtYi0yNScgb24gJ3VrYi1iLTE5NjU3J1xuIn0= -->
+<!-- rnb-message-begin eyJkYXRhIjoiQW5hbHlzaW5nICdpZXUtYi0yNScgb24gJ3VrYi1iLTE5NjU3J1xuIn0= -->
 <pre><code>Analysing &#39;ieu-b-25&#39; on &#39;ukb-b-19657&#39;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua2FibGUocmVzMSlcbmBgYCJ9 -->
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoia2FibGUocmVzMSkifQ== -->
 <pre class="r"><code>kable(res1)</code></pre>
 <!-- rnb-source-end -->
-
-<!-- rnb-html-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImtuaXRfYXNpcyJdLCJzaXppbmdQb2xpY3kiOltdfX0= -->
-
 <table>
 <colgroup>
 <col width="5%"></col>
@@ -2172,7 +2188,7 @@ Harmonising Cigarettes per Day || id:ieu-b-25 (ieu-b-25) and Forced expiratory v
 <td align="left">Weighted median</td>
 <td align="right">23</td>
 <td align="right">-0.0674418</td>
-<td align="right">0.0085753</td>
+<td align="right">0.0092548</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
@@ -2194,8 +2210,8 @@ Harmonising Cigarettes per Day || id:ieu-b-25 (ieu-b-25) and Forced expiratory v
 <td align="left">Simple mode</td>
 <td align="right">23</td>
 <td align="right">-0.0577462</td>
-<td align="right">0.0189546</td>
-<td align="right">0.0059189</td>
+<td align="right">0.0187063</td>
+<td align="right">0.0053863</td>
 </tr>
 <tr class="odd">
 <td align="left">ieu-b-25</td>
@@ -2205,29 +2221,27 @@ Harmonising Cigarettes per Day || id:ieu-b-25 (ieu-b-25) and Forced expiratory v
 <td align="left">Weighted mode</td>
 <td align="right">23</td>
 <td align="right">-0.0660628</td>
-<td align="right">0.0093126</td>
-<td align="right">0.0000004</td>
+<td align="right">0.0085947</td>
+<td align="right">0.0000001</td>
 </tr>
 </tbody>
 </table>
-
-
-<!-- rnb-html-end -->
-
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Discovered 23 instruments. Higher smoking leads to lower lung function.</p>
 <p>Directionality test:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuczEgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMSlcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiczEgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMSkifQ== -->
 <pre class="r"><code>s1 &lt;- directionality_test(d1)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoici5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIG5vdCBwcmVzZW50LlxuQ2FsY3VsYXRpbmcgYXBwcm94aW1hdGUgU05QLWV4cG9zdXJlIGFuZC9vciBTTlAtb3V0Y29tZSBjb3JyZWxhdGlvbnMsIGFzc3VtaW5nIGFsbCBhcmUgcXVhbnRpdGF0aXZlIHRyYWl0cy4gUGxlYXNlIHByZS1jYWxjdWxhdGUgci5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIHVzaW5nIGdldF9yX2Zyb21fbG9yKCkgZm9yIGFueSBiaW5hcnkgdHJhaXRzXG4ifQ== -->
-<pre><code>r.exposure and/or r.outcome not present.
-Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming all are quantitative traits. Please pre-calculate r.exposure and/or r.outcome using get_r_from_lor() for any binary traits</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKHMxKVxuYGBgIn0= -->
+<!-- rnb-message-begin eyJkYXRhIjoici5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIG5vdCBwcmVzZW50LlxuIn0= -->
+<pre><code>r.exposure and/or r.outcome not present.</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiQ2FsY3VsYXRpbmcgYXBwcm94aW1hdGUgU05QLWV4cG9zdXJlIGFuZC9vciBTTlAtb3V0Y29tZSBjb3JyZWxhdGlvbnMsIGFzc3VtaW5nIGFsbCBhcmUgcXVhbnRpdGF0aXZlIHRyYWl0cy4gUGxlYXNlIHByZS1jYWxjdWxhdGUgci5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIHVzaW5nIGdldF9yX2Zyb21fbG9yKCkgZm9yIGFueSBiaW5hcnkgdHJhaXRzXG4ifQ== -->
+<pre><code>Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming all are quantitative traits. Please pre-calculate r.exposure and/or r.outcome using get_r_from_lor() for any binary traits</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoic3RyKHMxKSJ9 -->
 <pre class="r"><code>str(s1)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0MSBvYnMuIG9mICA4IHZhcmlhYmxlczpcbiAkIGlkLmV4cG9zdXJlICAgICAgICAgICAgIDogY2hyIFwiaWV1LWItMjVcIlxuICQgaWQub3V0Y29tZSAgICAgICAgICAgICAgOiBjaHIgXCJ1a2ItYi0xOTY1N1wiXG4gJCBleHBvc3VyZSAgICAgICAgICAgICAgICA6IGNociBcIkNpZ2FyZXR0ZXMgcGVyIERheSB8fCBpZDppZXUtYi0yNVwiXG4gJCBvdXRjb21lICAgICAgICAgICAgICAgICA6IGNociBcIkZvcmNlZCBleHBpcmF0b3J5IHZvbHVtZSBpbiAxLXNlY29uZCAoRkVWMSkgfHwgaWQ6dWtiLWItMTk2NTdcIlxuICQgc25wX3IyLmV4cG9zdXJlICAgICAgICAgOiBudW0gMC4wMDg5MlxuICQgc25wX3IyLm91dGNvbWUgICAgICAgICAgOiBudW0gMC4wMDA0MzhcbiAkIGNvcnJlY3RfY2F1c2FsX2RpcmVjdGlvbjogbG9naSBUUlVFXG4gJCBzdGVpZ2VyX3B2YWwgICAgICAgICAgICA6IG51bSAxLjg2ZS0xODlcbiJ9 -->
@@ -2250,95 +2264,91 @@ Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming a
 <p>Now try former vs current smokers as the exposure.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ3dhc2luZm8oXCJpZXUtYS05NjNcIikgJT4lIHN0cigpXG5cbmBgYCJ9 -->
-<pre class="r"><code>gwasinfo(&quot;ieu-a-963&quot;) %&gt;% str()
-</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiZ3dhc2luZm8oXCJpZXUtYS05NjNcIikgJT4lIHN0cigpIn0= -->
+<pre class="r"><code>gwasinfo(&quot;ieu-a-963&quot;) %&gt;% str()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyDigJhHd2FzSW5mb+KAmSBhbmQgJ2RhdGEuZnJhbWUnOlx0MSBvYnMuIG9mICAyMCB2YXJpYWJsZXM6XG4gJCBpZCAgICAgICAgIDogY2hyIFwiaWV1LWEtOTYzXCJcbiAkIHRyYWl0ICAgICAgOiBjaHIgXCJGb3JtZXIgdnMgY3VycmVudCBzbW9rZXJcIlxuICQgc3ViY2F0ZWdvcnk6IGNociBcIkJlaGF2aW91cmFsXCJcbiAkIGNvbnNvcnRpdW0gOiBjaHIgXCJUQUdcIlxuICQgeWVhciAgICAgICA6IGludCAyMDEwXG4gJCB1bml0ICAgICAgIDogY2hyIFwibG9nIG9kZHNcIlxuICQgYXV0aG9yICAgICA6IGNociBcIkZ1cmJlcmdcIlxuICQgbXIgICAgICAgICA6IGludCAxXG4gJCBvbnRvbG9neSAgIDogbG9naSBOQVxuICQgc2FtcGxlX3NpemU6IGludCA0MTk2OVxuICQgY2F0ZWdvcnkgICA6IGNociBcIlJpc2sgZmFjdG9yXCJcbiAkIGdyb3VwX25hbWUgOiBjaHIgXCJwdWJsaWNcIlxuICQgc2V4ICAgICAgICA6IGNociBcIk1hbGVzIGFuZCBGZW1hbGVzXCJcbiAkIG5jb250cm9sICAgOiBpbnQgMTg0MTVcbiAkIHByaW9yaXR5ICAgOiBpbnQgMVxuICQgbmNhc2UgICAgICA6IGludCAyMzU1NFxuICQgbnNucCAgICAgICA6IGludCAyNDU2NTU1XG4gJCBidWlsZCAgICAgIDogY2hyIFwiSEcxOS9HUkNoMzdcIlxuICQgcG1pZCAgICAgICA6IGludCAyMDQxODg5MFxuICQgcG9wdWxhdGlvbiA6IGNociBcIkV1cm9wZWFuXCJcbiJ9 -->
-<pre><code>Classes ‘GwasInfo’ and &#39;data.frame&#39;:    1 obs. of  20 variables:
+<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyAnR3dhc0luZm8nIGFuZCAnZGF0YS5mcmFtZSc6XHQxIG9icy4gb2YgIDIwIHZhcmlhYmxlczpcbiAkIGlkICAgICAgICAgOiBjaHIgXCJpZXUtYS05NjNcIlxuICQgdHJhaXQgICAgICA6IGNociBcIkZvcm1lciB2cyBjdXJyZW50IHNtb2tlclwiXG4gJCB1bml0ICAgICAgIDogY2hyIFwibG9nIG9kZHNcIlxuICQgYnVpbGQgICAgICA6IGNociBcIkhHMTkvR1JDaDM3XCJcbiAkIHllYXIgICAgICAgOiBpbnQgMjAxMFxuICQgZ3JvdXBfbmFtZSA6IGNociBcInB1YmxpY1wiXG4gJCBzYW1wbGVfc2l6ZTogaW50IDQxOTY5XG4gJCBzZXggICAgICAgIDogY2hyIFwiTWFsZXMgYW5kIEZlbWFsZXNcIlxuICQgY29uc29ydGl1bSA6IGNociBcIlRBR1wiXG4gJCBjYXRlZ29yeSAgIDogY2hyIFwiUmlzayBmYWN0b3JcIlxuICQgcG1pZCAgICAgICA6IGludCAyMDQxODg5MFxuICQgbmNvbnRyb2wgICA6IGludCAxODQxNVxuICQgYXV0aG9yICAgICA6IGNociBcIkZ1cmJlcmdcIlxuICQgb250b2xvZ3kgICA6IGxvZ2kgTkFcbiAkIHByaW9yaXR5ICAgOiBpbnQgMVxuICQgc3ViY2F0ZWdvcnk6IGNociBcIkJlaGF2aW91cmFsXCJcbiAkIHBvcHVsYXRpb24gOiBjaHIgXCJFdXJvcGVhblwiXG4gJCBuc25wICAgICAgIDogaW50IDI0NTY1NTVcbiAkIG1yICAgICAgICAgOiBpbnQgMVxuICQgbmNhc2UgICAgICA6IGludCAyMzU1NFxuIn0= -->
+<pre><code>Classes &#39;GwasInfo&#39; and &#39;data.frame&#39;:    1 obs. of  20 variables:
  $ id         : chr &quot;ieu-a-963&quot;
  $ trait      : chr &quot;Former vs current smoker&quot;
- $ subcategory: chr &quot;Behavioural&quot;
- $ consortium : chr &quot;TAG&quot;
- $ year       : int 2010
  $ unit       : chr &quot;log odds&quot;
- $ author     : chr &quot;Furberg&quot;
- $ mr         : int 1
- $ ontology   : logi NA
- $ sample_size: int 41969
- $ category   : chr &quot;Risk factor&quot;
- $ group_name : chr &quot;public&quot;
- $ sex        : chr &quot;Males and Females&quot;
- $ ncontrol   : int 18415
- $ priority   : int 1
- $ ncase      : int 23554
- $ nsnp       : int 2456555
  $ build      : chr &quot;HG19/GRCh37&quot;
+ $ year       : int 2010
+ $ group_name : chr &quot;public&quot;
+ $ sample_size: int 41969
+ $ sex        : chr &quot;Males and Females&quot;
+ $ consortium : chr &quot;TAG&quot;
+ $ category   : chr &quot;Risk factor&quot;
  $ pmid       : int 20418890
- $ population : chr &quot;European&quot;</code></pre>
+ $ ncontrol   : int 18415
+ $ author     : chr &quot;Furberg&quot;
+ $ ontology   : logi NA
+ $ priority   : int 1
+ $ subcategory: chr &quot;Behavioural&quot;
+ $ population : chr &quot;European&quot;
+ $ nsnp       : int 2456555
+ $ mr         : int 1
+ $ ncase      : int 23554</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Are there any instruments?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6MCwibmNvbCI6MH0sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVAyd3JDTUF6TkxsVldtQXo4amhYVUZ6OUEvQUJSMkd1ZFU0ZTFIVjJIZnYwMHJldURZM2xKY2s1T2tuUFlGUnRhVUFDSUlJWVFJb0lsa05OeG4yOEI0aENiQUluRTVqY09MY0hGSDBFa2YxWXRGdGtFbVdqMVluNGduVktYZ3JkZTdVRjY0WWF6cTBZZGR2MUlNbGVOcVpWRVVXai9JU054b0VkQTFrbjd3U1V2NzUxODVLdTF2ZUQ0WDZUVHRiMFpmb1pkWk5nMXErU3RscFYvWHZCekpZWm1nVmFkVTlib1docHZCZEdXR1dXNG42T2xFaDV4NXFEL0FrZ3Foc2lIQVFBQSJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoidG9waGl0cyhcImlldS1hLTk2M1wiKSJ9 -->
+<pre class="r"><code>tophits(&quot;ieu-a-963&quot;)</code></pre>
+<!-- rnb-source-end -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[],"data":[],"options":{"columns":{"min":{},"max":[10],"total":[0]},"rows":{"min":[10],"max":[10],"total":[0]},"pages":{}}}
+{"columns":[],"data":[],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>No instruments. Use the instruments selected by Lutz et al.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubHV0el9ycyA8LSBjKFwicnM1NjExMzg1MFwiLCBcInJzMTI0NjEzODNcIiwgXCJyczcyNjAzMjlcIiwgXCJyczExODU4ODM2XCIsIFwicnM3MjczODc4NlwiLCBcInJzMTE2MzM5NThcIiwgXCJyczgxOTI0ODJcIiwgXCJyczI4Njk1NDhcIilcbmUyYSA8LSBleHRyYWN0X291dGNvbWVfZGF0YShsdXR6X3JzLCBcImlldS1hLTk2M1wiKSAlPiUgYWRkX3JzcSgpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjpbImx1dHpfcnMgPC0gYyhcInJzNTYxMTM4NTBcIiwgXCJyczEyNDYxMzgzXCIsIFwicnM3MjYwMzI5XCIsIFwicnMxMTg1ODgzNlwiLCBcInJzNzI3Mzg3ODZcIiwgXCJyczExNjMzOTU4XCIsIFwicnM4MTkyNDgyXCIsIFwicnMyODY5NTQ4XCIpIiwiZTJhIDwtIGV4dHJhY3Rfb3V0Y29tZV9kYXRhKGx1dHpfcnMsIFwiaWV1LWEtOTYzXCIpIl19 -->
 <pre class="r"><code>lutz_rs &lt;- c(&quot;rs56113850&quot;, &quot;rs12461383&quot;, &quot;rs7260329&quot;, &quot;rs11858836&quot;, &quot;rs72738786&quot;, &quot;rs11633958&quot;, &quot;rs8192482&quot;, &quot;rs2869548&quot;)
-e2a &lt;- extract_outcome_data(lutz_rs, &quot;ieu-a-963&quot;) %&gt;% add_rsq()</code></pre>
+e2a &lt;- extract_outcome_data(lutz_rs, &quot;ieu-a-963&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciA4IFNOUChzKSBmcm9tIDEgR1dBUyhzKVxuRmluZGluZyBwcm94aWVzIGZvciA2IFNOUHMgaW4gb3V0Y29tZSBpZXUtYS05NjNcbkV4dHJhY3RpbmcgZGF0YSBmb3IgNiBTTlAocykgZnJvbSAxIEdXQVMocylcbiJ9 -->
-<pre><code>Extracting data for 8 SNP(s) from 1 GWAS(s)
-Finding proxies for 6 SNPs in outcome ieu-a-963
-Extracting data for 6 SNP(s) from 1 GWAS(s)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZTIgPC0gY29udmVydF9vdXRjb21lX3RvX2V4cG9zdXJlKGUyYSlcbm8yIDwtIGV4dHJhY3Rfb3V0Y29tZV9kYXRhKGx1dHpfcnMsIFwidWtiLWItMTk2NTdcIilcbmBgYCJ9 -->
+<!-- rnb-message-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciA4IFNOUChzKSBmcm9tIDEgR1dBUyhzKVxuIn0= -->
+<pre><code>Extracting data for 8 SNP(s) from 1 GWAS(s)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiRmluZGluZyBwcm94aWVzIGZvciA2IFNOUHMgaW4gb3V0Y29tZSBpZXUtYS05NjNcbiJ9 -->
+<pre><code>Finding proxies for 6 SNPs in outcome ieu-a-963</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciA2IFNOUChzKSBmcm9tIDEgR1dBUyhzKVxuIn0= -->
+<pre><code>Extracting data for 6 SNP(s) from 1 GWAS(s)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjpbImUyIDwtIGNvbnZlcnRfb3V0Y29tZV90b19leHBvc3VyZShlMmEpIiwibzIgPC0gZXh0cmFjdF9vdXRjb21lX2RhdGEobHV0el9ycywgXCJ1a2ItYi0xOTY1N1wiKSJdfQ== -->
 <pre class="r"><code>e2 &lt;- convert_outcome_to_exposure(e2a)
 o2 &lt;- extract_outcome_data(lutz_rs, &quot;ukb-b-19657&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciA4IFNOUChzKSBmcm9tIDEgR1dBUyhzKVxuIn0= -->
+<!-- rnb-message-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciA4IFNOUChzKSBmcm9tIDEgR1dBUyhzKVxuIn0= -->
 <pre><code>Extracting data for 8 SNP(s) from 1 GWAS(s)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDIgPC0gaGFybW9uaXNlX2RhdGEoZTIsIG8yKVxuYGBgIn0= -->
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiZDIgPC0gaGFybW9uaXNlX2RhdGEoZTIsIG8yKSJ9 -->
 <pre class="r"><code>d2 &lt;- harmonise_data(e2, o2)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSGFybW9uaXNpbmcgRm9ybWVyIHZzIGN1cnJlbnQgc21va2VyIHx8IGlkOmlldS1hLTk2MyAoaWV1LWEtOTYzKSBhbmQgRm9yY2VkIGV4cGlyYXRvcnkgdm9sdW1lIGluIDEtc2Vjb25kIChGRVYxKSB8fCBpZDp1a2ItYi0xOTY1NyAodWtiLWItMTk2NTcpXG5SZW1vdmluZyB0aGUgZm9sbG93aW5nIFNOUHMgZm9yIGJlaW5nIHBhbGluZHJvbWljIHdpdGggaW50ZXJtZWRpYXRlIGFsbGVsZSBmcmVxdWVuY2llczpcbnJzMTI0NjEzODNcbiJ9 -->
-<pre><code>Harmonising Former vs current smoker || id:ieu-a-963 (ieu-a-963) and Forced expiratory volume in 1-second (FEV1) || id:ukb-b-19657 (ukb-b-19657)
-Removing the following SNPs for being palindromic with intermediate allele frequencies:
+<!-- rnb-message-begin eyJkYXRhIjoiSGFybW9uaXNpbmcgRm9ybWVyIHZzIGN1cnJlbnQgc21va2VyIHx8IGlkOmlldS1hLTk2MyAoaWV1LWEtOTYzKSBhbmQgRm9yY2VkIGV4cGlyYXRvcnkgdm9sdW1lIGluIDEtc2Vjb25kIChGRVYxKSB8fCBpZDp1a2ItYi0xOTY1NyAodWtiLWItMTk2NTcpXG4ifQ== -->
+<pre><code>Harmonising Former vs current smoker || id:ieu-a-963 (ieu-a-963) and Forced expiratory volume in 1-second (FEV1) || id:ukb-b-19657 (ukb-b-19657)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiUmVtb3ZpbmcgdGhlIGZvbGxvd2luZyBTTlBzIGZvciBiZWluZyBwYWxpbmRyb21pYyB3aXRoIGludGVybWVkaWF0ZSBhbGxlbGUgZnJlcXVlbmNpZXM6XG5yczEyNDYxMzgzXG4ifQ== -->
+<pre><code>Removing the following SNPs for being palindromic with intermediate allele frequencies:
 rs12461383</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDIgPC0gYWRkX3JzcShkMilcbmBgYCJ9 -->
-<pre class="r"><code>d2 &lt;- add_rsq(d2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVHJ5IGFkZGluZyBtZXRhZGF0YSB3aXRoIGFkZF9tZXRhZGF0YSgpXG4ifQ== -->
-<pre><code>Try adding metadata with add_metadata()</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDIgPC0gYWRkX21ldGFkYXRhKGQyKVxuZDIkci5leHBvc3VyZSA8LSBzcXJ0KGQyJHJzcS5leHBvc3VyZSkgKiBzaWduKGQyJGJldGEuZXhwb3N1cmUpXG5kMiRyLm91dGNvbWUgPC0gc3FydChkMiRyc3Eub3V0Y29tZSkgKiBzaWduKGQyJGJldGEub3V0Y29tZSlcbnJlczIgPC0gbXIoZDIpXG5gYGAifQ== -->
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjpbImQyIDwtIGFkZF9tZXRhZGF0YShkMikiLCJkMiA8LSBhZGRfcnNxKGQyKSIsInJlczIgPC0gbXIoZDIpIl19 -->
 <pre class="r"><code>d2 &lt;- add_metadata(d2)
-d2$r.exposure &lt;- sqrt(d2$rsq.exposure) * sign(d2$beta.exposure)
-d2$r.outcome &lt;- sqrt(d2$rsq.outcome) * sign(d2$beta.outcome)
+d2 &lt;- add_rsq(d2)
 res2 &lt;- mr(d2)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQW5hbHlzaW5nICdpZXUtYS05NjMnIG9uICd1a2ItYi0xOTY1NydcbiJ9 -->
+<!-- rnb-message-begin eyJkYXRhIjoiQW5hbHlzaW5nICdpZXUtYS05NjMnIG9uICd1a2ItYi0xOTY1NydcbiJ9 -->
 <pre><code>Analysing &#39;ieu-a-963&#39; on &#39;ukb-b-19657&#39;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua2FibGUocmVzMilcbmBgYCJ9 -->
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoia2FibGUocmVzMikifQ== -->
 <pre class="r"><code>kable(res2)</code></pre>
 <!-- rnb-source-end -->
-
-<!-- rnb-html-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImtuaXRfYXNpcyJdLCJzaXppbmdQb2xpY3kiOltdfX0= -->
-
 <table style="width:100%;">
 <colgroup>
 <col width="5%"></col>
@@ -2384,7 +2394,7 @@ res2 &lt;- mr(d2)</code></pre>
 <td align="left">Weighted median</td>
 <td align="right">5</td>
 <td align="right">0.1614594</td>
-<td align="right">0.0284538</td>
+<td align="right">0.0275281</td>
 <td align="right">0.0000000</td>
 </tr>
 <tr class="odd">
@@ -2406,8 +2416,8 @@ res2 &lt;- mr(d2)</code></pre>
 <td align="left">Simple mode</td>
 <td align="right">5</td>
 <td align="right">0.1626761</td>
-<td align="right">0.0283900</td>
-<td align="right">0.0045931</td>
+<td align="right">0.0270002</td>
+<td align="right">0.0038238</td>
 </tr>
 <tr class="odd">
 <td align="left">ieu-a-963</td>
@@ -2417,23 +2427,27 @@ res2 &lt;- mr(d2)</code></pre>
 <td align="left">Weighted mode</td>
 <td align="right">5</td>
 <td align="right">0.1614614</td>
-<td align="right">0.0296690</td>
-<td align="right">0.0055353</td>
+<td align="right">0.0273775</td>
+<td align="right">0.0041350</td>
 </tr>
 </tbody>
 </table>
-
-
-<!-- rnb-html-end -->
-
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Smoking cessation appears to increase FEV here.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuczIgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMilcbnN0cihzMilcbmBgYCJ9 -->
-<pre class="r"><code>s2 &lt;- directionality_test(d2)
-str(s2)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiczIgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMikifQ== -->
+<pre class="r"><code>s2 &lt;- directionality_test(d2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-message-begin eyJkYXRhIjoici5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIG5vdCBwcmVzZW50LlxuIn0= -->
+<pre><code>r.exposure and/or r.outcome not present.</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiQ2FsY3VsYXRpbmcgYXBwcm94aW1hdGUgU05QLWV4cG9zdXJlIGFuZC9vciBTTlAtb3V0Y29tZSBjb3JyZWxhdGlvbnMsIGFzc3VtaW5nIGFsbCBhcmUgcXVhbnRpdGF0aXZlIHRyYWl0cy4gUGxlYXNlIHByZS1jYWxjdWxhdGUgci5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIHVzaW5nIGdldF9yX2Zyb21fbG9yKCkgZm9yIGFueSBiaW5hcnkgdHJhaXRzXG4ifQ== -->
+<pre><code>Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming all are quantitative traits. Please pre-calculate r.exposure and/or r.outcome using get_r_from_lor() for any binary traits</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoic3RyKHMyKSJ9 -->
+<pre class="r"><code>str(s2)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0MSBvYnMuIG9mICA4IHZhcmlhYmxlczpcbiAkIGlkLmV4cG9zdXJlICAgICAgICAgICAgIDogY2hyIFwiaWV1LWEtOTYzXCJcbiAkIGlkLm91dGNvbWUgICAgICAgICAgICAgIDogY2hyIFwidWtiLWItMTk2NTdcIlxuICQgZXhwb3N1cmUgICAgICAgICAgICAgICAgOiBjaHIgXCJGb3JtZXIgdnMgY3VycmVudCBzbW9rZXIgfHwgaWQ6aWV1LWEtOTYzXCJcbiAkIG91dGNvbWUgICAgICAgICAgICAgICAgIDogY2hyIFwiRm9yY2VkIGV4cGlyYXRvcnkgdm9sdW1lIGluIDEtc2Vjb25kIChGRVYxKSB8fCBpZDp1a2ItYi0xOTY1N1wiXG4gJCBzbnBfcjIuZXhwb3N1cmUgICAgICAgICA6IG51bSAwLjAwMTkxXG4gJCBzbnBfcjIub3V0Y29tZSAgICAgICAgICA6IG51bSAwLjAwMDM5NlxuICQgY29ycmVjdF9jYXVzYWxfZGlyZWN0aW9uOiBsb2dpIFRSVUVcbiAkIHN0ZWlnZXJfcHZhbCAgICAgICAgICAgIDogbnVtIDMuMTVlLTA2XG4ifQ== -->
 <pre><code>&#39;data.frame&#39;:   1 obs. of  8 variables:
@@ -2450,37 +2464,87 @@ str(s2)</code></pre>
 <!-- rnb-text-begin -->
 <p>The causal direction is still from smoking cessation to FEV.</p>
 </div>
+<div id="steiger-filtering" class="section level3">
+<h3>Steiger filtering</h3>
+<p>Lutz et al actually don’t do the MR Steiger directionality test, they use the per-SNP Steiger filtering approach. Only 6 of the 8 SNPs they used are available for analysis here.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjpbImQyIDwtIHN0ZWlnZXJfZmlsdGVyaW5nKGQyKSIsImEgPC0gZDIgJT4lXG4gIHNlbGVjdChTTlAsIGNociwgcG9zLCBwdmFsLmV4cG9zdXJlLCByc3EuZXhwb3N1cmUsIHJzcS5vdXRjb21lLCBzdGVpZ2VyX2Rpciwgc3RlaWdlcl9wdmFsKSAlPiVcbiAgYXJyYW5nZShjaHIsIHBvcykiLCJiIDwtIG1yX3NpbmdsZXNucChkMikgJT4lIHNlbGVjdChTTlAsIGIsIHNlKSIsImEgPC0gaW5uZXJfam9pbihiLCBhLCBieT1cIlNOUFwiKSIsImEiXX0= -->
+<pre class="r"><code>d2 &lt;- steiger_filtering(d2)
+a &lt;- d2 %&gt;%
+  select(SNP, chr, pos, pval.exposure, rsq.exposure, rsq.outcome, steiger_dir, steiger_pval) %&gt;%
+  arrange(chr, pos)
+b &lt;- mr_singlesnp(d2) %&gt;% select(SNP, b, se)
+a &lt;- inner_join(b, a, by=&quot;SNP&quot;)
+a</code></pre>
+<!-- rnb-source-end -->
+<div data-pagedtable="false">
+<script data-pagedtable-source type="application/json">
+{"columns":[{"label":["SNP"],"name":[1],"type":["chr"],"align":["left"]},{"label":["b"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["se"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["chr"],"name":[4],"type":["chr"],"align":["left"]},{"label":["pos"],"name":[5],"type":["chr"],"align":["left"]},{"label":["pval.exposure"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["rsq.exposure"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["rsq.outcome"],"name":[8],"type":["dbl"],"align":["right"]},{"label":["steiger_dir"],"name":[9],"type":["lgl"],"align":["right"]},{"label":["steiger_pval"],"name":[10],"type":["dbl"],"align":["right"]}],"data":[{"1":"rs11633958","2":"0.1610027","3":"0.02533740","4":"15","5":"78862064","6":"1.18201e-05","7":"3.741979e-04","8":"6.106673e-05","9":"TRUE","10":"0.10551961"},{"1":"rs2869548","2":"0.1648123","3":"0.02884132","4":"15","5":"78922638","6":"1.93901e-04","7":"2.875499e-04","8":"4.958121e-05","9":"TRUE","10":"0.16390903"},{"1":"rs7260329","2":"-0.1018415","3":"0.05652776","4":"19","5":"41521638","6":"5.35599e-02","7":"7.435163e-05","8":"4.902763e-06","9":"TRUE","10":"0.36835822"},{"1":"rs72738786","2":"0.1714952","3":"0.02513643","4":"15","5":"78828086","6":"1.85699e-05","7":"3.774287e-04","8":"7.025959e-05","9":"TRUE","10":"0.12097560"},{"1":"rs8192482","2":"0.1546221","3":"0.02492389","4":"15","5":"78886198","6":"1.11900e-05","7":"3.818465e-04","8":"5.808712e-05","9":"TRUE","10":"0.09425263"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Summary:</p>
+<ul>
+<li>The SNP-exposure associations are not particularly strong, and the SNP-exposure R-square values are rather small</li>
+<li>In all cases still the Steiger direction is from exposure to outcome</li>
+<li>The Steiger p-values are modest and this can be interpreted as being due to low power given the weak SNP-exposure associations. When power is good then an inconclusive Steiger p-value could be used to indicate correlated pleiotropy.</li>
+</ul>
+</div>
 <div id="former-current-smokers-vs-fev1-using-uk-biobank" class="section level3">
 <h3>Former / current smokers vs FEV1 using UK Biobank</h3>
 <p>We could also try another dataset e.g. from UK Biobank</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZ3dhc2luZm8oXCJ1a2ItYi0xMTM1NVwiKSAlPiUgc3RyKClcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiZ3dhc2luZm8oXCJ1a2ItYi0xMTM1NVwiKSAlPiUgc3RyKCkifQ== -->
 <pre class="r"><code>gwasinfo(&quot;ukb-b-11355&quot;) %&gt;% str()</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiQ2xhc3NlcyAnR3dhc0luZm8nIGFuZCAnZGF0YS5mcmFtZSc6XHQxIG9icy4gb2YgIDIwIHZhcmlhYmxlczpcbiAkIGlkICAgICAgICAgOiBjaHIgXCJ1a2ItYi0xMTM1NVwiXG4gJCB0cmFpdCAgICAgIDogY2hyIFwiRXZlciBzdG9wcGVkIHNtb2tpbmcgZm9yIDYrIG1vbnRoc1wiXG4gJCB1bml0ICAgICAgIDogY2hyIFwiU0RcIlxuICQgYnVpbGQgICAgICA6IGNociBcIkhHMTkvR1JDaDM3XCJcbiAkIHllYXIgICAgICAgOiBpbnQgMjAxOFxuICQgZ3JvdXBfbmFtZSA6IGNociBcInB1YmxpY1wiXG4gJCBzYW1wbGVfc2l6ZTogaW50IDExMzIzMFxuICQgc2V4ICAgICAgICA6IGNociBcIk1hbGVzIGFuZCBGZW1hbGVzXCJcbiAkIGNvbnNvcnRpdW0gOiBjaHIgXCJNUkMtSUVVXCJcbiAkIGNhdGVnb3J5ICAgOiBjaHIgXCJCaW5hcnlcIlxuICQgbmNvbnRyb2wgICA6IGludCA2NDI0OVxuICQgYXV0aG9yICAgICA6IGNociBcIkJlbiBFbHN3b3J0aFwiXG4gJCBvbnRvbG9neSAgIDogbG9naSBOQVxuICQgbm90ZSAgICAgICA6IGNociBcIjI5MDc6IE91dHB1dCBmcm9tIEdXQVMgcGlwZWxpbmUgdXNpbmcgUGhlc2FudCBkZXJpdmVkIHZhcmlhYmxlcyBmcm9tIFVLQmlvYmFua1wiXG4gJCBwcmlvcml0eSAgIDogaW50IDFcbiAkIHN1YmNhdGVnb3J5OiBsb2dpIE5BXG4gJCBwb3B1bGF0aW9uIDogY2hyIFwiRXVyb3BlYW5cIlxuICQgbnNucCAgICAgICA6IGludCA5ODUxODY3XG4gJCBtciAgICAgICAgIDogaW50IDFcbiAkIG5jYXNlICAgICAgOiBpbnQgNDg5ODFcbiJ9 -->
+<pre><code>Classes &#39;GwasInfo&#39; and &#39;data.frame&#39;:    1 obs. of  20 variables:
+ $ id         : chr &quot;ukb-b-11355&quot;
+ $ trait      : chr &quot;Ever stopped smoking for 6+ months&quot;
+ $ unit       : chr &quot;SD&quot;
+ $ build      : chr &quot;HG19/GRCh37&quot;
+ $ year       : int 2018
+ $ group_name : chr &quot;public&quot;
+ $ sample_size: int 113230
+ $ sex        : chr &quot;Males and Females&quot;
+ $ consortium : chr &quot;MRC-IEU&quot;
+ $ category   : chr &quot;Binary&quot;
+ $ ncontrol   : int 64249
+ $ author     : chr &quot;Ben Elsworth&quot;
+ $ ontology   : logi NA
+ $ note       : chr &quot;2907: Output from GWAS pipeline using Phesant derived variables from UKBiobank&quot;
+ $ priority   : int 1
+ $ subcategory: logi NA
+ $ population : chr &quot;European&quot;
+ $ nsnp       : int 9851867
+ $ mr         : int 1
+ $ ncase      : int 48981</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDMgPC0gbWFrZV9kYXQoXCJ1a2ItYi0xMTM1NVwiLCBcInVrYi1iLTE5NjU3XCIpXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoiZDMgPC0gbWFrZV9kYXQoXCJ1a2ItYi0xMTM1NVwiLCBcInVrYi1iLTE5NjU3XCIpIn0= -->
 <pre class="r"><code>d3 &lt;- make_dat(&quot;ukb-b-11355&quot;, &quot;ukb-b-19657&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciAxIFNOUChzKSBmcm9tIDEgR1dBUyhzKVxuSGFybW9uaXNpbmcgRXZlciBzdG9wcGVkIHNtb2tpbmcgZm9yIDYrIG1vbnRocyB8fCBpZDp1a2ItYi0xMTM1NSAodWtiLWItMTEzNTUpIGFuZCBGb3JjZWQgZXhwaXJhdG9yeSB2b2x1bWUgaW4gMS1zZWNvbmQgKEZFVjEpIHx8IGlkOnVrYi1iLTE5NjU3ICh1a2ItYi0xOTY1NylcbiJ9 -->
-<pre><code>Extracting data for 1 SNP(s) from 1 GWAS(s)
-Harmonising Ever stopped smoking for 6+ months || id:ukb-b-11355 (ukb-b-11355) and Forced expiratory volume in 1-second (FEV1) || id:ukb-b-19657 (ukb-b-19657)</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVzMyA8LSBtcihkMylcbmBgYCJ9 -->
+<!-- rnb-message-begin eyJkYXRhIjoiRXh0cmFjdGluZyBkYXRhIGZvciAxIFNOUChzKSBmcm9tIDEgR1dBUyhzKVxuIn0= -->
+<pre><code>Extracting data for 1 SNP(s) from 1 GWAS(s)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiSGFybW9uaXNpbmcgRXZlciBzdG9wcGVkIHNtb2tpbmcgZm9yIDYrIG1vbnRocyB8fCBpZDp1a2ItYi0xMTM1NSAodWtiLWItMTEzNTUpIGFuZCBGb3JjZWQgZXhwaXJhdG9yeSB2b2x1bWUgaW4gMS1zZWNvbmQgKEZFVjEpIHx8IGlkOnVrYi1iLTE5NjU3ICh1a2ItYi0xOTY1NylcbiJ9 -->
+<pre><code>Harmonising Ever stopped smoking for 6+ months || id:ukb-b-11355 (ukb-b-11355) and Forced expiratory volume in 1-second (FEV1) || id:ukb-b-19657 (ukb-b-19657)</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoicmVzMyA8LSBtcihkMykifQ== -->
 <pre class="r"><code>res3 &lt;- mr(d3)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiQW5hbHlzaW5nICd1a2ItYi0xMTM1NScgb24gJ3VrYi1iLTE5NjU3J1xuIn0= -->
+<!-- rnb-message-begin eyJkYXRhIjoiQW5hbHlzaW5nICd1a2ItYi0xMTM1NScgb24gJ3VrYi1iLTE5NjU3J1xuIn0= -->
 <pre><code>Analysing &#39;ukb-b-11355&#39; on &#39;ukb-b-19657&#39;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua2FibGUocmVzMylcbmBgYCJ9 -->
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoia2FibGUocmVzMykifQ== -->
 <pre class="r"><code>kable(res3)</code></pre>
 <!-- rnb-source-end -->
-
-<!-- rnb-html-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbImtuaXRfYXNpcyJdLCJzaXppbmdQb2xpY3kiOltdfX0= -->
-
 <table style="width:100%;">
 <colgroup>
 <col width="5%"></col>
@@ -2520,23 +2584,21 @@ Harmonising Ever stopped smoking for 6+ months || id:ukb-b-11355 (ukb-b-11355) a
 </tr>
 </tbody>
 </table>
-
-
-<!-- rnb-html-end -->
-
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>Again, the effect of smoking cessation on FEV is positive.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuczMgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMylcbmBgYCJ9 -->
+<!-- rnb-source-begin eyJkYXRhIjoiczMgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMykifQ== -->
 <pre class="r"><code>s3 &lt;- directionality_test(d3)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoici5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIG5vdCBwcmVzZW50LlxuQ2FsY3VsYXRpbmcgYXBwcm94aW1hdGUgU05QLWV4cG9zdXJlIGFuZC9vciBTTlAtb3V0Y29tZSBjb3JyZWxhdGlvbnMsIGFzc3VtaW5nIGFsbCBhcmUgcXVhbnRpdGF0aXZlIHRyYWl0cy4gUGxlYXNlIHByZS1jYWxjdWxhdGUgci5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIHVzaW5nIGdldF9yX2Zyb21fbG9yKCkgZm9yIGFueSBiaW5hcnkgdHJhaXRzXG4ifQ== -->
-<pre><code>r.exposure and/or r.outcome not present.
-Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming all are quantitative traits. Please pre-calculate r.exposure and/or r.outcome using get_r_from_lor() for any binary traits</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKHMzKVxuYGBgIn0= -->
+<!-- rnb-message-begin eyJkYXRhIjoici5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIG5vdCBwcmVzZW50LlxuIn0= -->
+<pre><code>r.exposure and/or r.outcome not present.</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiQ2FsY3VsYXRpbmcgYXBwcm94aW1hdGUgU05QLWV4cG9zdXJlIGFuZC9vciBTTlAtb3V0Y29tZSBjb3JyZWxhdGlvbnMsIGFzc3VtaW5nIGFsbCBhcmUgcXVhbnRpdGF0aXZlIHRyYWl0cy4gUGxlYXNlIHByZS1jYWxjdWxhdGUgci5leHBvc3VyZSBhbmQvb3Igci5vdXRjb21lIHVzaW5nIGdldF9yX2Zyb21fbG9yKCkgZm9yIGFueSBiaW5hcnkgdHJhaXRzXG4ifQ== -->
+<pre><code>Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming all are quantitative traits. Please pre-calculate r.exposure and/or r.outcome using get_r_from_lor() for any binary traits</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoic3RyKHMzKSJ9 -->
 <pre class="r"><code>str(s3)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-output-begin eyJkYXRhIjoiJ2RhdGEuZnJhbWUnOlx0MSBvYnMuIG9mICA4IHZhcmlhYmxlczpcbiAkIGlkLmV4cG9zdXJlICAgICAgICAgICAgIDogY2hyIFwidWtiLWItMTEzNTVcIlxuICQgaWQub3V0Y29tZSAgICAgICAgICAgICAgOiBjaHIgXCJ1a2ItYi0xOTY1N1wiXG4gJCBleHBvc3VyZSAgICAgICAgICAgICAgICA6IGNociBcIkV2ZXIgc3RvcHBlZCBzbW9raW5nIGZvciA2KyBtb250aHMgfHwgaWQ6dWtiLWItMTEzNTVcIlxuICQgb3V0Y29tZSAgICAgICAgICAgICAgICAgOiBjaHIgXCJGb3JjZWQgZXhwaXJhdG9yeSB2b2x1bWUgaW4gMS1zZWNvbmQgKEZFVjEpIHx8IGlkOnVrYi1iLTE5NjU3XCJcbiAkIHNucF9yMi5leHBvc3VyZSAgICAgICAgIDogbnVtIDAuMDAwNDAxXG4gJCBzbnBfcjIub3V0Y29tZSAgICAgICAgICA6IG51bSAzLjUxZS0wNVxuICQgY29ycmVjdF9jYXVzYWxfZGlyZWN0aW9uOiBsb2dpIFRSVUVcbiAkIHN0ZWlnZXJfcHZhbCAgICAgICAgICAgIDogbnVtIDIuNWUtMDVcbiJ9 -->
@@ -2558,7 +2620,7 @@ Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming a
 <h3>Summarise results</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGliYmxlKFxuICBleHBvc3VyZSA9IGMoXG4gICAgXCJFdmVyIHZzIG5ldmVyIHNtb2tlZCwgVUsgQmlvYmFua1wiLFxuICAgIFwiQ2lnYXJldHRlIHNtb2tlZCBwZXIgZGF5LCBMaXUgZXQgYWwgMjAxOVwiLFxuICAgIFwiU21va2luZyBjZXNzYXRpb24sIEZ1cmJlcmcgZXQgYWwgMjAxMCwgdXNpbmcgTHV0eiBldCBhbCBzZWxlY3RlZCBpbnN0cnVtZW50c1wiLFxuICAgIFwiU21va2luZyBjZXNzYXRpb24sIFVLIEJpb2JhbmtcIiksXG4gIG5zbnAgPSBzYXBwbHkobGlzdChkMCwgZDEsIGQyLCBkMyksIGZ1bmN0aW9uKHgpIHN1bSh4JG1yX2tlZXApKSxcbiAgbXIgPSBzYXBwbHkobGlzdChyZXMwLCByZXMxLCByZXMyLCByZXMzKSwgZnVuY3Rpb24oeCkgeCRiW3gkbWV0aG9kICVpbiUgYyhcIkludmVyc2UgdmFyaWFuY2Ugd2VpZ2h0ZWRcIiwgXCJXYWxkIHJhdGlvXCIpXSksXG4gIG1yX3NlID0gc2FwcGx5KGxpc3QocmVzMCwgcmVzMSwgcmVzMiwgcmVzMyksIGZ1bmN0aW9uKHgpIHgkc2VbeCRtZXRob2QgJWluJSBjKFwiSW52ZXJzZSB2YXJpYW5jZSB3ZWlnaHRlZFwiLCBcIldhbGQgcmF0aW9cIildKSxcbiAgcnNxX2V4cCA9IHNhcHBseShsaXN0KHMwLCBzMSwgczIsIHMzKSwgZnVuY3Rpb24oeCkgeCRzbnBfcjIuZXhwb3N1cmUpLFxuICByc3Ffb3V0ID0gc2FwcGx5KGxpc3QoczAsIHMxLCBzMiwgczMpLCBmdW5jdGlvbih4KSB4JHNucF9yMi5vdXRjb21lKSxcbiAgY29ycmVjdF9zdGVpZ2VyID0gc2FwcGx5KGxpc3QoczAsIHMxLCBzMiwgczMpLCBmdW5jdGlvbih4KSB4JGNvcnJlY3RfY2F1c2FsX2RpcmVjdGlvbiksXG4gIHN0ZWlnZXJfcHZhbCA9IHNhcHBseShsaXN0KHMwLCBzMSwgczIsIHMzKSwgZnVuY3Rpb24oeCkgeCRzdGVpZ2VyX3B2YWwpXG4pXG5gYGAifQ== -->
+<!-- rnb-source-begin eyJkYXRhIjoidGliYmxlKFxuICBleHBvc3VyZSA9IGMoXG4gICAgXCJFdmVyIHZzIG5ldmVyIHNtb2tlZCwgVUsgQmlvYmFua1wiLFxuICAgIFwiQ2lnYXJldHRlIHNtb2tlZCBwZXIgZGF5LCBMaXUgZXQgYWwgMjAxOVwiLFxuICAgIFwiU21va2luZyBjZXNzYXRpb24sIEZ1cmJlcmcgZXQgYWwgMjAxMCwgdXNpbmcgTHV0eiBldCBhbCBzZWxlY3RlZCBpbnN0cnVtZW50c1wiLFxuICAgIFwiU21va2luZyBjZXNzYXRpb24sIFVLIEJpb2JhbmtcIiksXG4gIG5zbnAgPSBzYXBwbHkobGlzdChkMCwgZDEsIGQyLCBkMyksIGZ1bmN0aW9uKHgpIHN1bSh4JG1yX2tlZXApKSxcbiAgbXIgPSBzYXBwbHkobGlzdChyZXMwLCByZXMxLCByZXMyLCByZXMzKSwgZnVuY3Rpb24oeCkgeCRiW3gkbWV0aG9kICVpbiUgYyhcIkludmVyc2UgdmFyaWFuY2Ugd2VpZ2h0ZWRcIiwgXCJXYWxkIHJhdGlvXCIpXSksXG4gIG1yX3NlID0gc2FwcGx5KGxpc3QocmVzMCwgcmVzMSwgcmVzMiwgcmVzMyksIGZ1bmN0aW9uKHgpIHgkc2VbeCRtZXRob2QgJWluJSBjKFwiSW52ZXJzZSB2YXJpYW5jZSB3ZWlnaHRlZFwiLCBcIldhbGQgcmF0aW9cIildKSxcbiAgcnNxX2V4cCA9IHNhcHBseShsaXN0KHMwLCBzMSwgczIsIHMzKSwgZnVuY3Rpb24oeCkgeCRzbnBfcjIuZXhwb3N1cmUpLFxuICByc3Ffb3V0ID0gc2FwcGx5KGxpc3QoczAsIHMxLCBzMiwgczMpLCBmdW5jdGlvbih4KSB4JHNucF9yMi5vdXRjb21lKSxcbiAgY29ycmVjdF9zdGVpZ2VyID0gc2FwcGx5KGxpc3QoczAsIHMxLCBzMiwgczMpLCBmdW5jdGlvbih4KSB4JGNvcnJlY3RfY2F1c2FsX2RpcmVjdGlvbiksXG4gIHN0ZWlnZXJfcHZhbCA9IHNhcHBseShsaXN0KHMwLCBzMSwgczIsIHMzKSwgZnVuY3Rpb24oeCkgeCRzdGVpZ2VyX3B2YWwpXG4pIn0= -->
 <pre class="r"><code>tibble(
   exposure = c(
     &quot;Ever vs never smoked, UK Biobank&quot;,
@@ -2574,24 +2636,60 @@ Calculating approximate SNP-exposure and/or SNP-outcome correlations, assuming a
   steiger_pval = sapply(list(s0, s1, s2, s3), function(x) x$steiger_pval)
 )</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-frame-begin eyJtZXRhZGF0YSI6eyJjbGFzc2VzIjpbInRibF9kZiIsInRibCIsImRhdGEuZnJhbWUiXSwibnJvdyI6NCwibmNvbCI6OH0sInJkZiI6Ikg0c0lBQUFBQUFBQUEyMVNRV2dUUVJTZGJCT2JybG9EUFdnUHRYUFFWakNKc1ZHd1VycTBhbEpzdk5SVUNoN2laak9OU3phemNXWTJqWXBRS3ZSZ1BWZ1FQYWluWGdSUlF4VkJFVklvdWZUUWs0aFZLRVVGb1FlcEJ6MFVhWnlOc3pVc0htYjN2ei92L2YzL3Z4MDVQUmFWeDJRQVFCUHdBZ2swK1hnSWZLUEpXT2dFQUY2SkF3Ky9hTEhmSlU1cTQ0R2Zud0EvWG5FQnp4UVJnVVVLTWJJRG1qZHpLQk9FbzhOd1VEZlRLczRKM3FGVGVsWWxpREVrT0xEQTZSbjFhaEFtZEFzaUJsVUQ5a1NPOWdwKzRqeG42VGdMTlVTcHluUVRCMkhNSW1sRXN2L0lrU0MwcUUxS1dPeWFTRk5rSUkzeCtqcW1qRmg1aEJrVk5UditVN09oVVFCMjF3Y0RJTW5QWG5zVjlRMEEwR3JuSytYYTdOZnB6eHVWc2lmUXZmUnpYVm5zZW5EdjduS1BzdHI5Ni8zTzVCZUhweng3cTcyYi82RXBNMDhQVEc2dXhaVkg1WUhySDZibWxFb0NIdmt1dmQ3bTNYaDg3bVg3VUpjeU5UZ3pQUGVpWFVtTmpIZXdvYVJ5TXJhU3I2N2QyZWFkdmZDcSt1VGd2TkwzL0EyN0gvbW85RzdzWHpnOHNLaElsMWJNNmVYam5DT0x2ajJ1VTlkMzZ2SDFPTG9ZM2Jkd1M5Tm01VkwvMGtUbnpkVlBnZjdOdm1ybzI4UGJMcWQ5V00waktsejJpNlFmbFFvbXRRZ1MySXNwTG9oWXloTkhtaWNwNmxDYUNiMlM0ckpHYUZwTXdEMmFTUWozS1VVWjByUElxYkJMd0ZTaHFCcXV4bHFJT1JGMm1yT2RraWI1bzFhci9YWlBvQmtxZFNad2tuSkdaV3A0bkhBOVIxc3VTYk5ac0g4SExwTGFoTytOWWc5eEpRSVd0anZKaExUTEZzNkZvc2VFQ2ZiU2dXalBJMHh4WXYvZmIwbzFVY3NuYXUxQU9LdGpaMjArUTAwalE0QldQbko5NG5DQjZOalpuY3l6Tk14TXBqbzhXVE1OSjFNZkRtejlBZElUenZMY0F3QUEifQ== -->
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["exposure"],"name":[1],"type":["chr"],"align":["left"]},{"label":["nsnp"],"name":[2],"type":["int"],"align":["right"]},{"label":["mr"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mr_se"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["rsq_exp"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["rsq_out"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["correct_steiger"],"name":[7],"type":["lgl"],"align":["right"]},{"label":["steiger_pval"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"Ever vs never smoked, UK Biobank","2":"84","3":"-0.06639969","4":"0.06003105","5":"0.0072405849","6":"8.037941e-04","7":"TRUE","8":"2.301681e-157"},{"1":"Cigarette smoked per day, Liu et al 2019","2":"23","3":"-0.06251622","4":"0.01351384","5":"0.0089159853","6":"4.377203e-04","7":"TRUE","8":"1.856194e-189"},{"1":"Smoking cessation, Furberg et al 2010, using Lutz et al selected instruments","2":"5","3":"0.14961572","4":"0.02899268","5":"0.0019117353","6":"3.957820e-04","7":"TRUE","8":"3.154913e-06"},{"1":"Smoking cessation, UK Biobank","2":"1","3":"0.47118922","4":"0.12225534","5":"0.0004009515","6":"3.505386e-05","7":"TRUE","8":"2.502192e-05"}],"options":{"columns":{"min":{},"max":[10],"total":[8]},"rows":{"min":[10],"max":[10],"total":[4]},"pages":{}}}
+{"columns":[{"label":["exposure"],"name":[1],"type":["chr"],"align":["left"]},{"label":["nsnp"],"name":[2],"type":["int"],"align":["right"]},{"label":["mr"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["mr_se"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["rsq_exp"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["rsq_out"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["correct_steiger"],"name":[7],"type":["lgl"],"align":["right"]},{"label":["steiger_pval"],"name":[8],"type":["dbl"],"align":["right"]}],"data":[{"1":"Ever vs never smoked, UK Biobank","2":"84","3":"-0.06639969","4":"0.06003105","5":"0.0072405849","6":"8.037941e-04","7":"TRUE","8":"2.301681e-157"},{"1":"Cigarette smoked per day, Liu et al 2019","2":"23","3":"-0.06251622","4":"0.01351384","5":"0.0089159853","6":"4.377203e-04","7":"TRUE","8":"1.856194e-189"},{"1":"Smoking cessation, Furberg et al 2010, using Lutz et al selected instruments","2":"5","3":"0.14961572","4":"0.02899268","5":"0.0019117353","6":"3.957340e-04","7":"TRUE","8":"3.151303e-06"},{"1":"Smoking cessation, UK Biobank","2":"1","3":"0.47118922","4":"0.12225534","5":"0.0004009515","6":"3.505386e-05","7":"TRUE","8":"2.502192e-05"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<!-- rnb-frame-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ul>
 <li>Smoking behaviours have a causal influence on lung function (FEV1), where higher smoking relates to poorer lung function</li>
 <li>The causal direction is consistently from smoking behaviour to lung function</li>
 </ul>
+</div>
+</div>
+<div id="ld-between-lutz-snps" class="section level2">
+<h2>LD between Lutz SNPs</h2>
+<p>It seems like many of the SNPs are very close to each other.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoibGQgPC0gbGRfbWF0cml4KGx1dHpfcnMpIn0= -->
+<pre class="r"><code>ld &lt;- ld_matrix(lutz_rs)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-message-begin eyJkYXRhIjoiUGxlYXNlIGxvb2sgYXQgdmlnbmV0dGVzIGZvciBvcHRpb25zIG9uIHJ1bm5pbmcgdGhpcyBsb2NhbGx5IGlmIHlvdSBuZWVkIHRvIHJ1biBtYW55IGluc3RhbmNlcyBvZiB0aGlzIGNvbW1hbmQuXG4ifQ== -->
+<pre><code>Please look at vignettes for options on running this locally if you need to run many instances of this command.</code></pre>
+<!-- rnb-message-end -->
+<!-- rnb-source-begin eyJkYXRhIjoibGQifQ== -->
+<pre class="r"><code>ld</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICAgICAgcnM1NjExMzg1MF9UX0MgcnMxMjQ2MTM4M19DX0cgcnM3MjYwMzI5X0FfRyByczExODU4ODM2X0FfR1xucnM1NjExMzg1MF9UX0MgICAgIDEuMDAwMDAwMDAgICAgIDAuODI4MzEzMDAgICAgMC4yNDkyNTEwMCAgICAgLTAuMDM0MDk5MFxucnMxMjQ2MTM4M19DX0cgICAgIDAuODI4MzEzMDAgICAgIDEuMDAwMDAwMDAgICAgMC4yMzAzNDQwMCAgICAgLTAuMDIyOTQ1NVxucnM3MjYwMzI5X0FfRyAgICAgIDAuMjQ5MjUxMDAgICAgIDAuMjMwMzQ0MDAgICAgMS4wMDAwMDAwMCAgICAgLTAuMDM2MTYzMFxucnMxMTg1ODgzNl9BX0cgICAgLTAuMDM0MDk5MDAgICAgLTAuMDIyOTQ1NTAgICAtMC4wMzYxNjMwMCAgICAgIDEuMDAwMDAwMFxucnM3MjczODc4Nl9UX0cgICAgIDAuMDA4ODM4NjQgICAgIDAuMDAxNTk1OTUgICAtMC4wMDYwNzE5OCAgICAgIDAuODI3NTA1MFxucnMxMTYzMzk1OF9UX0MgICAgIDAuMDIzNDQ0MzAgICAgIDAuMDEzNjkzMzAgICAgMC4wMTE1OTU2MCAgICAgIDAuNzk2MTgwMFxucnM4MTkyNDgyX1RfQyAgICAgIDAuMDI1NjcyNzAgICAgIDAuMDE0NTc3NjAgICAgMC4wMDc0NDgyMiAgICAgIDAuNzk1MjQwMFxucnMyODY5NTQ4X0FfRyAgICAgIDAuMDE3Mjg0MjAgICAgLTAuMDA3MTk1NjEgICAgMC4wMTU1NDU2MCAgICAgIDAuNzUyNDcwMFxuICAgICAgICAgICAgICAgcnM3MjczODc4Nl9UX0cgcnMxMTYzMzk1OF9UX0MgcnM4MTkyNDgyX1RfQyByczI4Njk1NDhfQV9HXG5yczU2MTEzODUwX1RfQyAgICAgMC4wMDg4Mzg2NCAgICAgIDAuMDIzNDQ0MyAgICAwLjAyNTY3MjcwICAgIDAuMDE3Mjg0MjBcbnJzMTI0NjEzODNfQ19HICAgICAwLjAwMTU5NTk1ICAgICAgMC4wMTM2OTMzICAgIDAuMDE0NTc3NjAgICAtMC4wMDcxOTU2MVxucnM3MjYwMzI5X0FfRyAgICAgLTAuMDA2MDcxOTggICAgICAwLjAxMTU5NTYgICAgMC4wMDc0NDgyMiAgICAwLjAxNTU0NTYwXG5yczExODU4ODM2X0FfRyAgICAgMC44Mjc1MDUwMCAgICAgIDAuNzk2MTgwMCAgICAwLjc5NTI0MDAwICAgIDAuNzUyNDcwMDBcbnJzNzI3Mzg3ODZfVF9HICAgICAxLjAwMDAwMDAwICAgICAgMC45NTQzNzEwICAgIDAuOTQ4MDEwMDAgICAgMC44OTQ1NTUwMFxucnMxMTYzMzk1OF9UX0MgICAgIDAuOTU0MzcxMDAgICAgICAxLjAwMDAwMDAgICAgMC45ODk1MjQwMCAgICAwLjkxNzI0MTAwXG5yczgxOTI0ODJfVF9DICAgICAgMC45NDgwMTAwMCAgICAgIDAuOTg5NTI0MCAgICAxLjAwMDAwMDAwICAgIDAuOTIzMjY2MDBcbnJzMjg2OTU0OF9BX0cgICAgICAwLjg5NDU1NTAwICAgICAgMC45MTcyNDEwICAgIDAuOTIzMjY2MDAgICAgMS4wMDAwMDAwMFxuIn0= -->
+<pre><code>               rs56113850_T_C rs12461383_C_G rs7260329_A_G rs11858836_A_G
+rs56113850_T_C     1.00000000     0.82831300    0.24925100     -0.0340990
+rs12461383_C_G     0.82831300     1.00000000    0.23034400     -0.0229455
+rs7260329_A_G      0.24925100     0.23034400    1.00000000     -0.0361630
+rs11858836_A_G    -0.03409900    -0.02294550   -0.03616300      1.0000000
+rs72738786_T_G     0.00883864     0.00159595   -0.00607198      0.8275050
+rs11633958_T_C     0.02344430     0.01369330    0.01159560      0.7961800
+rs8192482_T_C      0.02567270     0.01457760    0.00744822      0.7952400
+rs2869548_A_G      0.01728420    -0.00719561    0.01554560      0.7524700
+               rs72738786_T_G rs11633958_T_C rs8192482_T_C rs2869548_A_G
+rs56113850_T_C     0.00883864      0.0234443    0.02567270    0.01728420
+rs12461383_C_G     0.00159595      0.0136933    0.01457760   -0.00719561
+rs7260329_A_G     -0.00607198      0.0115956    0.00744822    0.01554560
+rs11858836_A_G     0.82750500      0.7961800    0.79524000    0.75247000
+rs72738786_T_G     1.00000000      0.9543710    0.94801000    0.89455500
+rs11633958_T_C     0.95437100      1.0000000    0.98952400    0.91724100
+rs8192482_T_C      0.94801000      0.9895240    1.00000000    0.92326600
+rs2869548_A_G      0.89455500      0.9172410    0.92326600    1.00000000</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>They are not independent.</p>
 <!-- rnb-text-end -->
 </div>
-</div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiBBbmFseXNpcyBvZiBzbW9raW5nIGFuZCBGRVYKYXV0aG9yOiBHaWJyYW4gSGVtYW5pCm91dHB1dDogaHRtbF9ub3RlYm9vawpkYXRlOiAyMDIxLTA5LTA0Ci0tLQoKTHV0eiBldCBhbCAyMDIxIHN1Z2dlc3QgdGhhdCB0aGUgTVIgU3RlaWdlciB0ZXN0IHdpbGwgbGVhZCB0byB0aGUgaW5jb3JyZWN0IGNhdXNhbCBkaXJlY3Rpb24gZm9yIHNtb2tpbmcgc3RhdHVzIChjdXJyZW50IHZzIGZvcm1lcikgb24gbHVuZyBmdW5jdGlvbiAoRkVWKS4gUHJlc3VtYWJseSB0aGUgaHlwb3RoZXNpcyBpcyB0aGF0IGdvaW5nIGZyb20gY3VycmVudCB0byBmb3JtZXIgc2hvdWxkIGhhdmUgYSBwb3NpdGl2ZSBjYXVzYWwgaW5mbHVlbmNlIG9uIEZFViwgYW5kIHRoYXQgRkVWIHNob3VsZCBub3QgaGF2ZSBhIGNhdXNhbCBpbmZsdWVuY2Ugb24gZ29pbmcgZnJvbSBjdXJyZW50IHRvIGZvcm1lci4gCgpMdXR6IGV0IGFsIHJlcG9ydCB0aGUgU3RlaWdlciB0ZXN0IHJlc3VsdCBvZiB0aGUgY2F1c2FsIGRpcmVjdGlvbiBvZiBGRVYgLT4gc21va2luZyBzdGF0dXMsIGFuZCB0aGF0IHRoaXMgaW5kaWNhdGVzIGhvcml6b250YWwgcGxlaW90cm9weSBpcyBiaWFzaW5nIHRoZSByZXN1bHQuCgpPYmplY3RpdmVzOgoKMS4gQ2FuIHNhbXBsZSBzZWxlY3Rpb24gZGlzdG9ydCB0aGUgTVIgU3RlaWdlciBtZXRob2Q/CjIuIFJlLWFuYWx5c2lzIG9mIHNtb2tpbmcgYW5kIGx1bmcgZnVuY3Rpb24gdXNpbmcgcHVibGljIEdXQVMgc3VtbWFyeSBkYXRhCgpgYGB7cn0Kc3VwcHJlc3NNZXNzYWdlcyhzdXBwcmVzc1BhY2thZ2VTdGFydHVwTWVzc2FnZXMoc3VwcHJlc3NXYXJuaW5ncyh7CmxpYnJhcnkoVHdvU2FtcGxlTVIpCmxpYnJhcnkoaWV1Z3dhc3IpCmxpYnJhcnkodGlkeXZlcnNlKQpsaWJyYXJ5KHNpbXVsYXRlR1ApCmxpYnJhcnkoa25pdHIpCn0pKSkKa25pdHI6Om9wdHNfY2h1bmskc2V0KHdhcm5pbmc9RkFMU0UpCmBgYAoKIyMgQ2FuIHNhbXBsZSBzZWxlY3Rpb24gZGlzdG9ydCB0aGUgTVIgU3RlaWdlciBtZXRob2Q/CgpIZXJlIGlzIGEgc2ltcGxlIG51bWVyaWNhbCBleGFtcGxlIHdoZXJlIGNvbmRpdGlvbmluZyBvbiB0aGUgZXhwb3N1cmUgbGVhZHMgdG8gdGhlIHdyb25nIGRpcmVjdGlvbi4gVGhlcmUgaXMgYW4gaW5zdHJ1bWVudCBmb3IgdGhlIGV4cG9zdXJlLCB0aGUgZXhwb3N1cmUgaW5mbHVlbmNlcyB0aGUgb3V0Y29tZSwgYW5kIHRoZXJlIGlzIGEgY29uZm91bmRlciBmb3IgdGhlIGV4cG9zdXJlIGFuZCBvdXRjb21lCgpgYGB7cn0KbiA8LSAxMDAwMDAKaXYgPC0gcm5vcm0obikgKyAxCnUgPC0gcm5vcm0obikKZXhwb3N1cmUgPC0gaXYgKiAwLjUgKyBybm9ybShuKSArIHUgKiAtMgpvdXRjb21lIDwtIGV4cG9zdXJlICogMC41ICsgcm5vcm0obikgKyAyICogdQpgYGAKCkluIHRoZSBNUiBTdGVpZ2VyIGFuYWx5c2lzIG9mIHRoZSBjb21wbGV0ZSBkYXRhIHRoZSBkaXJlY3Rpb24gaXMgY29ycmVjdAoKYGBge3J9CmNvcihpdiwgZXhwb3N1cmUpXjIKY29yKGl2LCBvdXRjb21lKV4yCmBgYAoKSW4gdGhlIHNlbGVjdGVkIHNhbXBsZSwgdXNpbmcgb25seSBpbmRpdmlkdWFscyB3aXRoIGEgaGlnaCBleHBvc3VyZSwgdGhlIHZhcmlhbmNlIGluIHRoZSBleHBvc3VyZSBoYXMgYmVlbiByZXN0cmljdGVkIGFuZCB0aGUgcnNxIGlzIGhpZ2hlciBmb3IgdGhlIG91dGNvbWUgdGhhbiB0aGUgZXhwb3N1cmUKCmBgYHtyfQpjb3IoaXZbZXhwb3N1cmU+PTFdLCBleHBvc3VyZVtleHBvc3VyZT49MV0pXjIKY29yKGl2W2V4cG9zdXJlPj0xXSwgb3V0Y29tZVtleHBvc3VyZT49MV0pXjIKYGBgCgpXaGF0IGFib3V0IGNvbGxpZGVyIGJpYXM/IE5vdyB0aGUgZXhwb3N1cmUgYW5kIG91dGNvbWUgYm90aCBpbmZsdWVuY2Ugc2FtcGxlIHNlbGVjdGlvbgoKYGBge3J9Cm4gPC0gMTAwMDAwCml2IDwtIHJub3JtKG4pICsgMQp1IDwtIHJub3JtKG4pCmV4cG9zdXJlIDwtIGl2ICogMC41ICsgcm5vcm0obikgKyB1ICogLTIKb3V0Y29tZSA8LSBleHBvc3VyZSAqIDAuNSArIHJub3JtKG4pICsgMiAqIHUKY29sbGlkZXIgPC0gZXhwb3N1cmUgKyBvdXRjb21lCnNlbGVjdGVkIDwtIGNvbGxpZGVyID4gbWVkaWFuKGNvbGxpZGVyKQpgYGAKCkluIHRoZSBjb21wbGV0ZSBzYW1wbGUgdGhlIE1SIFN0ZWlnZXIgbWV0aG9kIGlzIGNvcnJlY3QKCmBgYHtyfQpjb3IoaXYsIGV4cG9zdXJlKV4yCmNvcihpdiwgb3V0Y29tZSleMgpgYGAKCkluIHRoZSBzZWxlY3RlZCBzYW1wbGUgdGhlIGNhdXNhbCBkaXJlY3Rpb24gYXBwZWFycyByZXZlcnNlCgpgYGB7cn0KY29yKGl2W3NlbGVjdGVkXSwgZXhwb3N1cmVbc2VsZWN0ZWRdKV4yCmNvcihpdltzZWxlY3RlZF0sIG91dGNvbWVbc2VsZWN0ZWRdKV4yCmBgYAoKCiMjIyBTdW1tYXJ5CgotIEx1dHogZXQgYWwgcmVzdHJpY3QgdGhlIGFuYWx5c2lzIHRvIGV2ZXItc21va2VycywgdGhpcyByZWR1Y2VzIHRoZSB2YXJpYW5jZSBpbiB0aGUgZXhwb3N1cmUgYW5kIGNhbiBsZWFkIHRvIHRoZSBJVi1leHBvc3VyZSByc3EgYmVpbmcgbG93ZXIgdGhhbiB0aGUgSVYtb3V0Y29tZSByc3EKLSBMdXR6IGV0IGFsIHJlc3RyaWN0IHRoZSBhbmFseXNpcyB0byBDT1BEIGNhc2VzLCB3aGljaCBpcyBpbmZsdWVuY2VkIGJ5IHRoZSBleHBvc3VyZSBhbmQgb3V0Y29tZS4gVGhpcyBsZWFkcyB0byBjb2xsaWRlciBiaWFzIHRoYXQgZGlzdG9ydHMgdGhlIElWLWV4cG9zdXJlIGFuZCBJVi1vdXRjb21lIHJzcSB2YWx1ZXMKCgojIyBSZS1hbmFseXNpcyBvZiBzbW9raW5nIGFuZCBsdW5nIGZ1bmN0aW9uIHVzaW5nIHB1YmxpYyBHV0FTIHN1bW1hcnkgZGF0YQoKVXNlIFVLIEJpb2JhbmsgbHVuZyBmdW5jdGlvbiBtZWFzdXJlIEZFVjEKCkZFVjE6CgpgYGB7cn0KZ3dhc2luZm8oInVrYi1iLTE5NjU3IikgJT4lIHN0cigpCmBgYAoKVXNlIHZhcmlvdXMgc21va2luZyBiZWhhdmlvdXIgdHJhaXRzIGFzIGV4cG9zdXJlLgoKIyMjIEV2ZXIgLyBuZXZlciBzbW9rZXJzIG9uIEZFVjEKCmBgYHtyfQpnd2FzaW5mbygidWtiLWItMjAyNjEiKSAlPiUgc3RyKCkKYGBgCmBgYHtyfQpkMCA8LSBtYWtlX2RhdCgidWtiLWItMjAyNjEiLCAidWtiLWItMTk2NTciKQpyZXMwIDwtIG1yKGQwKQprYWJsZShyZXMwKQpgYGAKCkRpcmVjdGlvbmFsaXR5IHRlc3QKCmBgYHtyfQpzMCA8LSBkaXJlY3Rpb25hbGl0eV90ZXN0KGQwKSAKc3RyKHMwKQpgYGAKCiMjIyBDaWdhcmV0dGVzIHNtb2tlZCBwZXIgZGF5IG9uIEZFVjEKClVzZSBjaWdhcmV0dGVzIHNtb2tlZCBwZXIgZGF5IGFzIHRoZSBleHBvc3VyZSBhbmQgRkVWMSBhcyB0aGUgb3V0Y29tZQoKQ2lnYXJldHRlcyBzbW9rZWQgcGVyIGRheToKCmBgYHtyfQpnd2FzaW5mbygiaWV1LWItMjUiKSAlPiUgc3RyKCkKYGBgCgpNUiBhbmFseXNpczoKCmBgYHtyfQpkMSA8LSBtYWtlX2RhdCgiaWV1LWItMjUiLCAidWtiLWItMTk2NTciKQpyZXMxIDwtIG1yKGQxKQprYWJsZShyZXMxKQpgYGAKCkRpc2NvdmVyZWQgMjMgaW5zdHJ1bWVudHMuIEhpZ2hlciBzbW9raW5nIGxlYWRzIHRvIGxvd2VyIGx1bmcgZnVuY3Rpb24uCgpEaXJlY3Rpb25hbGl0eSB0ZXN0OgoKYGBge3J9CnMxIDwtIGRpcmVjdGlvbmFsaXR5X3Rlc3QoZDEpCnN0cihzMSkKYGBgCgpUaGUgY2F1c2FsIG9yaWVudGF0aW9uIGlzIGVzdGltYXRlZCB0byBiZSBmcm9tIHNtb2tpbmcgdG8gbHVuZyBmdW5jdGlvbi4KCiMjIyBGb3JtZXIgLyBjdXJyZW50IHNtb2tlcnMgb24gRkVWMQoKTm93IHRyeSBmb3JtZXIgdnMgY3VycmVudCBzbW9rZXJzIGFzIHRoZSBleHBvc3VyZS4KCmBgYHtyfQpnd2FzaW5mbygiaWV1LWEtOTYzIikgJT4lIHN0cigpCmBgYAoKQXJlIHRoZXJlIGFueSBpbnN0cnVtZW50cz8KCmBgYHtyfQp0b3BoaXRzKCJpZXUtYS05NjMiKQpgYGAKCk5vIGluc3RydW1lbnRzLiBVc2UgdGhlIGluc3RydW1lbnRzIHNlbGVjdGVkIGJ5IEx1dHogZXQgYWwuCgoKYGBge3J9Cmx1dHpfcnMgPC0gYygicnM1NjExMzg1MCIsICJyczEyNDYxMzgzIiwgInJzNzI2MDMyOSIsICJyczExODU4ODM2IiwgInJzNzI3Mzg3ODYiLCAicnMxMTYzMzk1OCIsICJyczgxOTI0ODIiLCAicnMyODY5NTQ4IikKZTJhIDwtIGV4dHJhY3Rfb3V0Y29tZV9kYXRhKGx1dHpfcnMsICJpZXUtYS05NjMiKSAlPiUgYWRkX3JzcSgpCmUyIDwtIGNvbnZlcnRfb3V0Y29tZV90b19leHBvc3VyZShlMmEpCm8yIDwtIGV4dHJhY3Rfb3V0Y29tZV9kYXRhKGx1dHpfcnMsICJ1a2ItYi0xOTY1NyIpCmQyIDwtIGhhcm1vbmlzZV9kYXRhKGUyLCBvMikKZDIgPC0gYWRkX3JzcShkMikKZDIgPC0gYWRkX21ldGFkYXRhKGQyKQpkMiRyLmV4cG9zdXJlIDwtIHNxcnQoZDIkcnNxLmV4cG9zdXJlKSAqIHNpZ24oZDIkYmV0YS5leHBvc3VyZSkKZDIkci5vdXRjb21lIDwtIHNxcnQoZDIkcnNxLm91dGNvbWUpICogc2lnbihkMiRiZXRhLm91dGNvbWUpCnJlczIgPC0gbXIoZDIpCmthYmxlKHJlczIpCmBgYAoKU21va2luZyBjZXNzYXRpb24gYXBwZWFycyB0byBpbmNyZWFzZSBGRVYgaGVyZS4KCmBgYHtyfQpzMiA8LSBkaXJlY3Rpb25hbGl0eV90ZXN0KGQyKQpzdHIoczIpCmBgYAoKVGhlIGNhdXNhbCBkaXJlY3Rpb24gaXMgc3RpbGwgZnJvbSBzbW9raW5nIGNlc3NhdGlvbiB0byBGRVYuCgojIyMgRm9ybWVyIC8gY3VycmVudCBzbW9rZXJzIHZzIEZFVjEgdXNpbmcgVUsgQmlvYmFuawoKV2UgY291bGQgYWxzbyB0cnkgYW5vdGhlciBkYXRhc2V0IGUuZy4gZnJvbSBVSyBCaW9iYW5rCgpgYGB7cn0KZ3dhc2luZm8oInVrYi1iLTExMzU1IikgJT4lIHN0cigpCmBgYAoKYGBge3J9CmQzIDwtIG1ha2VfZGF0KCJ1a2ItYi0xMTM1NSIsICJ1a2ItYi0xOTY1NyIpCnJlczMgPC0gbXIoZDMpCmthYmxlKHJlczMpCmBgYAoKQWdhaW4sIHRoZSBlZmZlY3Qgb2Ygc21va2luZyBjZXNzYXRpb24gb24gRkVWIGlzIHBvc2l0aXZlLgoKYGBge3J9CnMzIDwtIGRpcmVjdGlvbmFsaXR5X3Rlc3QoZDMpCnN0cihzMykKYGBgCgpBbmQgdGhlIGNhdXNhbCBkaXJlY3Rpb24gaXMgaW5mZXJyZWQgdG8gYmUgZnJvbSBzbW9raW5nIGNlc3NhdGlvbiB0byBGRVYuCgoKIyMjIFN1bW1hcmlzZSByZXN1bHRzCgpgYGB7cn0KdGliYmxlKAogIGV4cG9zdXJlID0gYygKICAgICJFdmVyIHZzIG5ldmVyIHNtb2tlZCwgVUsgQmlvYmFuayIsCiAgICAiQ2lnYXJldHRlIHNtb2tlZCBwZXIgZGF5LCBMaXUgZXQgYWwgMjAxOSIsCiAgICAiU21va2luZyBjZXNzYXRpb24sIEZ1cmJlcmcgZXQgYWwgMjAxMCwgdXNpbmcgTHV0eiBldCBhbCBzZWxlY3RlZCBpbnN0cnVtZW50cyIsCiAgICAiU21va2luZyBjZXNzYXRpb24sIFVLIEJpb2JhbmsiKSwKICBuc25wID0gc2FwcGx5KGxpc3QoZDAsIGQxLCBkMiwgZDMpLCBmdW5jdGlvbih4KSBzdW0oeCRtcl9rZWVwKSksCiAgbXIgPSBzYXBwbHkobGlzdChyZXMwLCByZXMxLCByZXMyLCByZXMzKSwgZnVuY3Rpb24oeCkgeCRiW3gkbWV0aG9kICVpbiUgYygiSW52ZXJzZSB2YXJpYW5jZSB3ZWlnaHRlZCIsICJXYWxkIHJhdGlvIildKSwKICBtcl9zZSA9IHNhcHBseShsaXN0KHJlczAsIHJlczEsIHJlczIsIHJlczMpLCBmdW5jdGlvbih4KSB4JHNlW3gkbWV0aG9kICVpbiUgYygiSW52ZXJzZSB2YXJpYW5jZSB3ZWlnaHRlZCIsICJXYWxkIHJhdGlvIildKSwKICByc3FfZXhwID0gc2FwcGx5KGxpc3QoczAsIHMxLCBzMiwgczMpLCBmdW5jdGlvbih4KSB4JHNucF9yMi5leHBvc3VyZSksCiAgcnNxX291dCA9IHNhcHBseShsaXN0KHMwLCBzMSwgczIsIHMzKSwgZnVuY3Rpb24oeCkgeCRzbnBfcjIub3V0Y29tZSksCiAgY29ycmVjdF9zdGVpZ2VyID0gc2FwcGx5KGxpc3QoczAsIHMxLCBzMiwgczMpLCBmdW5jdGlvbih4KSB4JGNvcnJlY3RfY2F1c2FsX2RpcmVjdGlvbiksCiAgc3RlaWdlcl9wdmFsID0gc2FwcGx5KGxpc3QoczAsIHMxLCBzMiwgczMpLCBmdW5jdGlvbih4KSB4JHN0ZWlnZXJfcHZhbCkKKQpgYGAKCi0gU21va2luZyBiZWhhdmlvdXJzIGhhdmUgYSBjYXVzYWwgaW5mbHVlbmNlIG9uIGx1bmcgZnVuY3Rpb24gKEZFVjEpLCB3aGVyZSBoaWdoZXIgc21va2luZyByZWxhdGVzIHRvIHBvb3JlciBsdW5nIGZ1bmN0aW9uCi0gVGhlIGNhdXNhbCBkaXJlY3Rpb24gaXMgY29uc2lzdGVudGx5IGZyb20gc21va2luZyBiZWhhdmlvdXIgdG8gbHVuZyBmdW5jdGlvbgoK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiBBbmFseXNpcyBvZiBzbW9raW5nIGFuZCBGRVYKYXV0aG9yOiBHaWJyYW4gSGVtYW5pCm91dHB1dDogaHRtbF9ub3RlYm9vawpkYXRlOiAyMDIxLTA5LTA0Ci0tLQoKVGhlIHNvdXJjZSBjb2RlIGZvciB0aGlzIGRvY3VtZW50IGlzIGF2YWlsYWJsZSBhdDogaHR0cHM6Ly9naXRodWIuY29tL2V4cGxvZGVjb21wdXRlci9zdGVpZ2VyX2NvbGxpZGVyL2Jsb2IvbWFpbi9kb2NzL2x1dHpfcmVhbmFseXNpcy5ybWQKCi0tLQoKIyMgQmFja2dyb3VuZAoKTHV0eiBldCBhbCAyMDIxIHN1Z2dlc3QgdGhhdCB0aGUgTVIgU3RlaWdlciB0ZXN0IHdpbGwgbGVhZCB0byB0aGUgaW5jb3JyZWN0IGNhdXNhbCBkaXJlY3Rpb24gZm9yIHNtb2tpbmcgc3RhdHVzIChjdXJyZW50IHZzIGZvcm1lcikgb24gbHVuZyBmdW5jdGlvbiAoRkVWKS4gUHJlc3VtYWJseSB0aGUgaHlwb3RoZXNpcyBpcyB0aGF0IGdvaW5nIGZyb20gY3VycmVudCB0byBmb3JtZXIgc2hvdWxkIGhhdmUgYSBwb3NpdGl2ZSBjYXVzYWwgaW5mbHVlbmNlIG9uIEZFViwgYW5kIHRoYXQgRkVWIHNob3VsZCBub3QgaGF2ZSBhIGNhdXNhbCBpbmZsdWVuY2Ugb24gZ29pbmcgZnJvbSBjdXJyZW50IHRvIGZvcm1lci4gCgpMdXR6IGV0IGFsIHJlcG9ydCB0aGUgU3RlaWdlciB0ZXN0IHJlc3VsdCBvZiB0aGUgY2F1c2FsIGRpcmVjdGlvbiBvZiBGRVYxIC0+IHNtb2tpbmcgc3RhdHVzLCBhbmQgdGhhdCB0aGlzIGluZGljYXRlcyBob3Jpem9udGFsIHBsZWlvdHJvcHkgaXMgYmlhc2luZyB0aGUgcmVzdWx0LgoKT2JqZWN0aXZlczoKCjEuIENhbiBzYW1wbGUgc2VsZWN0aW9uIGRpc3RvcnQgdGhlIE1SIFN0ZWlnZXIgbWV0aG9kPwoyLiBSZS1hbmFseXNpcyBvZiBzbW9raW5nIGFuZCBsdW5nIGZ1bmN0aW9uIHVzaW5nIHB1YmxpYyBHV0FTIHN1bW1hcnkgZGF0YQoKYGBge3J9CnN1cHByZXNzTWVzc2FnZXMoc3VwcHJlc3NQYWNrYWdlU3RhcnR1cE1lc3NhZ2VzKHN1cHByZXNzV2FybmluZ3MoewogIGxpYnJhcnkoVHdvU2FtcGxlTVIpCiAgbGlicmFyeShpZXVnd2FzcikKICBsaWJyYXJ5KHRpZHl2ZXJzZSkKICBsaWJyYXJ5KGtuaXRyKQp9KSkpCmtuaXRyOjpvcHRzX2NodW5rJHNldCh3YXJuaW5nPUZBTFNFKQpgYGAKCiMjIENhbiBzYW1wbGUgc2VsZWN0aW9uIGRpc3RvcnQgdGhlIE1SIFN0ZWlnZXIgbWV0aG9kPwoKSGVyZSBpcyBhIHNpbXBsZSBudW1lcmljYWwgZXhhbXBsZSB3aGVyZSBjb25kaXRpb25pbmcgb24gdGhlIGV4cG9zdXJlIGxlYWRzIHRvIHRoZSB3cm9uZyBkaXJlY3Rpb24uIFRoZXJlIGlzIGFuIGluc3RydW1lbnQgZm9yIHRoZSBleHBvc3VyZSwgdGhlIGV4cG9zdXJlIGluZmx1ZW5jZXMgdGhlIG91dGNvbWUsIGFuZCB0aGVyZSBpcyBhIGNvbmZvdW5kZXIgZm9yIHRoZSBleHBvc3VyZSBhbmQgb3V0Y29tZQoKYGBge3J9Cm4gPC0gMTAwMDAwCml2IDwtIHJub3JtKG4pICsgMQp1IDwtIHJub3JtKG4pCmV4cG9zdXJlIDwtIGl2ICogMC41ICsgcm5vcm0obikgKyB1ICogLTIKb3V0Y29tZSA8LSBleHBvc3VyZSAqIDAuNSArIHJub3JtKG4pICsgMiAqIHUKYGBgCgpJbiB0aGUgTVIgU3RlaWdlciBhbmFseXNpcyBvZiB0aGUgY29tcGxldGUgZGF0YSB0aGUgZGlyZWN0aW9uIGlzIGNvcnJlY3QKCmBgYHtyfQpjb3IoaXYsIGV4cG9zdXJlKV4yCmNvcihpdiwgb3V0Y29tZSleMgpgYGAKCkluIHRoZSBzZWxlY3RlZCBzYW1wbGUsIHVzaW5nIG9ubHkgaW5kaXZpZHVhbHMgd2l0aCBhIGhpZ2ggZXhwb3N1cmUsIHRoZSB2YXJpYW5jZSBpbiB0aGUgZXhwb3N1cmUgaGFzIGJlZW4gcmVzdHJpY3RlZCBhbmQgdGhlIHJzcSBpcyBoaWdoZXIgZm9yIHRoZSBvdXRjb21lIHRoYW4gdGhlIGV4cG9zdXJlCgpgYGB7cn0KY29yKGl2W2V4cG9zdXJlPj0xXSwgZXhwb3N1cmVbZXhwb3N1cmU+PTFdKV4yCmNvcihpdltleHBvc3VyZT49MV0sIG91dGNvbWVbZXhwb3N1cmU+PTFdKV4yCmBgYAoKV2hhdCBhYm91dCBjb2xsaWRlciBiaWFzPyBOb3cgdGhlIGV4cG9zdXJlIGFuZCBvdXRjb21lIGJvdGggaW5mbHVlbmNlIHNhbXBsZSBzZWxlY3Rpb24KCmBgYHtyfQpuIDwtIDEwMDAwMAppdiA8LSBybm9ybShuKSArIDEKdSA8LSBybm9ybShuKQpleHBvc3VyZSA8LSBpdiAqIDAuNSArIHJub3JtKG4pICsgdSAqIC0yCm91dGNvbWUgPC0gZXhwb3N1cmUgKiAwLjUgKyBybm9ybShuKSArIDIgKiB1CmNvbGxpZGVyIDwtIGV4cG9zdXJlICsgb3V0Y29tZQpzZWxlY3RlZCA8LSBjb2xsaWRlciA+IG1lZGlhbihjb2xsaWRlcikKYGBgCgpJbiB0aGUgY29tcGxldGUgc2FtcGxlIHRoZSBNUiBTdGVpZ2VyIG1ldGhvZCBpcyBjb3JyZWN0CgpgYGB7cn0KY29yKGl2LCBleHBvc3VyZSleMgpjb3IoaXYsIG91dGNvbWUpXjIKYGBgCgpJbiB0aGUgc2VsZWN0ZWQgc2FtcGxlIHRoZSBjYXVzYWwgZGlyZWN0aW9uIGFwcGVhcnMgcmV2ZXJzZQoKYGBge3J9CmNvcihpdltzZWxlY3RlZF0sIGV4cG9zdXJlW3NlbGVjdGVkXSleMgpjb3IoaXZbc2VsZWN0ZWRdLCBvdXRjb21lW3NlbGVjdGVkXSleMgpgYGAKCgojIyMgU3VtbWFyeQoKLSBMdXR6IGV0IGFsIHJlc3RyaWN0IHRoZSBhbmFseXNpcyB0byBldmVyLXNtb2tlcnMsIHRoaXMgcmVkdWNlcyB0aGUgdmFyaWFuY2UgaW4gdGhlIGV4cG9zdXJlIGFuZCBjYW4gbGVhZCB0byB0aGUgSVYtZXhwb3N1cmUgcnNxIGJlaW5nIGxvd2VyIHRoYW4gdGhlIElWLW91dGNvbWUgcnNxCi0gTHV0eiBldCBhbCByZXN0cmljdCB0aGUgYW5hbHlzaXMgdG8gQ09QRCBjYXNlcywgd2hpY2ggaXMgaW5mbHVlbmNlZCBieSB0aGUgZXhwb3N1cmUgYW5kIG91dGNvbWUuIFRoaXMgbGVhZHMgdG8gY29sbGlkZXIgYmlhcyB0aGF0IGRpc3RvcnRzIHRoZSBJVi1leHBvc3VyZSBhbmQgSVYtb3V0Y29tZSByc3EgdmFsdWVzCgoKIyMgUmUtYW5hbHlzaXMgb2Ygc21va2luZyBhbmQgbHVuZyBmdW5jdGlvbiB1c2luZyBwdWJsaWMgR1dBUyBzdW1tYXJ5IGRhdGEKClVzZSBVSyBCaW9iYW5rIGx1bmcgZnVuY3Rpb24gbWVhc3VyZSBGRVYxCgpGRVYxOgoKYGBge3J9Cmd3YXNpbmZvKCJ1a2ItYi0xOTY1NyIpICU+JSBzdHIoKQpgYGAKClVzZSB2YXJpb3VzIHNtb2tpbmcgYmVoYXZpb3VyIHRyYWl0cyBhcyBleHBvc3VyZS4KCiMjIyBFdmVyIC8gbmV2ZXIgc21va2VycyBvbiBGRVYxCgpgYGB7cn0KZ3dhc2luZm8oInVrYi1iLTIwMjYxIikgJT4lIHN0cigpCmBgYApgYGB7cn0KZDAgPC0gbWFrZV9kYXQoInVrYi1iLTIwMjYxIiwgInVrYi1iLTE5NjU3IikKcmVzMCA8LSBtcihkMCkKa2FibGUocmVzMCkKYGBgCgpEaXJlY3Rpb25hbGl0eSB0ZXN0CgpgYGB7cn0KczAgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMCkgCnN0cihzMCkKYGBgCgojIyMgQ2lnYXJldHRlcyBzbW9rZWQgcGVyIGRheSBvbiBGRVYxCgpVc2UgY2lnYXJldHRlcyBzbW9rZWQgcGVyIGRheSBhcyB0aGUgZXhwb3N1cmUgYW5kIEZFVjEgYXMgdGhlIG91dGNvbWUKCkNpZ2FyZXR0ZXMgc21va2VkIHBlciBkYXk6CgpgYGB7cn0KZ3dhc2luZm8oImlldS1iLTI1IikgJT4lIHN0cigpCmBgYAoKTVIgYW5hbHlzaXM6CgpgYGB7cn0KZDEgPC0gbWFrZV9kYXQoImlldS1iLTI1IiwgInVrYi1iLTE5NjU3IikKcmVzMSA8LSBtcihkMSkKa2FibGUocmVzMSkKYGBgCgpEaXNjb3ZlcmVkIDIzIGluc3RydW1lbnRzLiBIaWdoZXIgc21va2luZyBsZWFkcyB0byBsb3dlciBsdW5nIGZ1bmN0aW9uLgoKRGlyZWN0aW9uYWxpdHkgdGVzdDoKCmBgYHtyfQpzMSA8LSBkaXJlY3Rpb25hbGl0eV90ZXN0KGQxKQpzdHIoczEpCmBgYAoKVGhlIGNhdXNhbCBvcmllbnRhdGlvbiBpcyBlc3RpbWF0ZWQgdG8gYmUgZnJvbSBzbW9raW5nIHRvIGx1bmcgZnVuY3Rpb24uCgojIyMgRm9ybWVyIC8gY3VycmVudCBzbW9rZXJzIG9uIEZFVjEKCk5vdyB0cnkgZm9ybWVyIHZzIGN1cnJlbnQgc21va2VycyBhcyB0aGUgZXhwb3N1cmUuCgpgYGB7cn0KZ3dhc2luZm8oImlldS1hLTk2MyIpICU+JSBzdHIoKQpgYGAKCkFyZSB0aGVyZSBhbnkgaW5zdHJ1bWVudHM/CgpgYGB7cn0KdG9waGl0cygiaWV1LWEtOTYzIikKYGBgCgpObyBpbnN0cnVtZW50cy4gVXNlIHRoZSBpbnN0cnVtZW50cyBzZWxlY3RlZCBieSBMdXR6IGV0IGFsLgoKCmBgYHtyfQpsdXR6X3JzIDwtIGMoInJzNTYxMTM4NTAiLCAicnMxMjQ2MTM4MyIsICJyczcyNjAzMjkiLCAicnMxMTg1ODgzNiIsICJyczcyNzM4Nzg2IiwgInJzMTE2MzM5NTgiLCAicnM4MTkyNDgyIiwgInJzMjg2OTU0OCIpCmUyYSA8LSBleHRyYWN0X291dGNvbWVfZGF0YShsdXR6X3JzLCAiaWV1LWEtOTYzIikKZTIgPC0gY29udmVydF9vdXRjb21lX3RvX2V4cG9zdXJlKGUyYSkKbzIgPC0gZXh0cmFjdF9vdXRjb21lX2RhdGEobHV0el9ycywgInVrYi1iLTE5NjU3IikKZDIgPC0gaGFybW9uaXNlX2RhdGEoZTIsIG8yKQpkMiA8LSBhZGRfbWV0YWRhdGEoZDIpCmQyIDwtIGFkZF9yc3EoZDIpCnJlczIgPC0gbXIoZDIpCmthYmxlKHJlczIpCmBgYAoKCgoKU21va2luZyBjZXNzYXRpb24gYXBwZWFycyB0byBpbmNyZWFzZSBGRVYgaGVyZS4KCmBgYHtyfQpzMiA8LSBkaXJlY3Rpb25hbGl0eV90ZXN0KGQyKQpzdHIoczIpCmBgYAoKVGhlIGNhdXNhbCBkaXJlY3Rpb24gaXMgc3RpbGwgZnJvbSBzbW9raW5nIGNlc3NhdGlvbiB0byBGRVYuCgoKIyMjIFN0ZWlnZXIgZmlsdGVyaW5nCgpMdXR6IGV0IGFsIGFjdHVhbGx5IGRvbid0IGRvIHRoZSBNUiBTdGVpZ2VyIGRpcmVjdGlvbmFsaXR5IHRlc3QsIHRoZXkgdXNlIHRoZSBwZXItU05QIFN0ZWlnZXIgZmlsdGVyaW5nIGFwcHJvYWNoLiBPbmx5IDYgb2YgdGhlIDggU05QcyB0aGV5IHVzZWQgYXJlIGF2YWlsYWJsZSBmb3IgYW5hbHlzaXMgaGVyZS4gCgpgYGB7cn0KZDIgPC0gc3RlaWdlcl9maWx0ZXJpbmcoZDIpCmEgPC0gZDIgJT4lCiAgc2VsZWN0KFNOUCwgY2hyLCBwb3MsIHB2YWwuZXhwb3N1cmUsIHJzcS5leHBvc3VyZSwgcnNxLm91dGNvbWUsIHN0ZWlnZXJfZGlyLCBzdGVpZ2VyX3B2YWwpICU+JQogIGFycmFuZ2UoY2hyLCBwb3MpCmIgPC0gbXJfc2luZ2xlc25wKGQyKSAlPiUgc2VsZWN0KFNOUCwgYiwgc2UpCmEgPC0gaW5uZXJfam9pbihiLCBhLCBieT0iU05QIikKYQpgYGAKClN1bW1hcnk6CgotIFRoZSBTTlAtZXhwb3N1cmUgYXNzb2NpYXRpb25zIGFyZSBub3QgcGFydGljdWxhcmx5IHN0cm9uZywgYW5kIHRoZSBTTlAtZXhwb3N1cmUgUi1zcXVhcmUgdmFsdWVzIGFyZSByYXRoZXIgc21hbGwKLSBJbiBhbGwgY2FzZXMgc3RpbGwgdGhlIFN0ZWlnZXIgZGlyZWN0aW9uIGlzIGZyb20gZXhwb3N1cmUgdG8gb3V0Y29tZQotIFRoZSBTdGVpZ2VyIHAtdmFsdWVzIGFyZSBtb2Rlc3QgYW5kIHRoaXMgY2FuIGJlIGludGVycHJldGVkIGFzIGJlaW5nIGR1ZSB0byBsb3cgcG93ZXIgZ2l2ZW4gdGhlIHdlYWsgU05QLWV4cG9zdXJlIGFzc29jaWF0aW9ucy4gV2hlbiBwb3dlciBpcyBnb29kIHRoZW4gYW4gaW5jb25jbHVzaXZlIFN0ZWlnZXIgcC12YWx1ZSBjb3VsZCBiZSB1c2VkIHRvIGluZGljYXRlIGNvcnJlbGF0ZWQgcGxlaW90cm9weS4KCiMjIyBGb3JtZXIgLyBjdXJyZW50IHNtb2tlcnMgdnMgRkVWMSB1c2luZyBVSyBCaW9iYW5rCgpXZSBjb3VsZCBhbHNvIHRyeSBhbm90aGVyIGRhdGFzZXQgZS5nLiBmcm9tIFVLIEJpb2JhbmsKCmBgYHtyfQpnd2FzaW5mbygidWtiLWItMTEzNTUiKSAlPiUgc3RyKCkKYGBgCgpgYGB7cn0KZDMgPC0gbWFrZV9kYXQoInVrYi1iLTExMzU1IiwgInVrYi1iLTE5NjU3IikKcmVzMyA8LSBtcihkMykKa2FibGUocmVzMykKYGBgCgpBZ2FpbiwgdGhlIGVmZmVjdCBvZiBzbW9raW5nIGNlc3NhdGlvbiBvbiBGRVYgaXMgcG9zaXRpdmUuCgpgYGB7cn0KczMgPC0gZGlyZWN0aW9uYWxpdHlfdGVzdChkMykKc3RyKHMzKQpgYGAKCkFuZCB0aGUgY2F1c2FsIGRpcmVjdGlvbiBpcyBpbmZlcnJlZCB0byBiZSBmcm9tIHNtb2tpbmcgY2Vzc2F0aW9uIHRvIEZFVi4KCgojIyMgU3VtbWFyaXNlIHJlc3VsdHMKCmBgYHtyfQp0aWJibGUoCiAgZXhwb3N1cmUgPSBjKAogICAgIkV2ZXIgdnMgbmV2ZXIgc21va2VkLCBVSyBCaW9iYW5rIiwKICAgICJDaWdhcmV0dGUgc21va2VkIHBlciBkYXksIExpdSBldCBhbCAyMDE5IiwKICAgICJTbW9raW5nIGNlc3NhdGlvbiwgRnVyYmVyZyBldCBhbCAyMDEwLCB1c2luZyBMdXR6IGV0IGFsIHNlbGVjdGVkIGluc3RydW1lbnRzIiwKICAgICJTbW9raW5nIGNlc3NhdGlvbiwgVUsgQmlvYmFuayIpLAogIG5zbnAgPSBzYXBwbHkobGlzdChkMCwgZDEsIGQyLCBkMyksIGZ1bmN0aW9uKHgpIHN1bSh4JG1yX2tlZXApKSwKICBtciA9IHNhcHBseShsaXN0KHJlczAsIHJlczEsIHJlczIsIHJlczMpLCBmdW5jdGlvbih4KSB4JGJbeCRtZXRob2QgJWluJSBjKCJJbnZlcnNlIHZhcmlhbmNlIHdlaWdodGVkIiwgIldhbGQgcmF0aW8iKV0pLAogIG1yX3NlID0gc2FwcGx5KGxpc3QocmVzMCwgcmVzMSwgcmVzMiwgcmVzMyksIGZ1bmN0aW9uKHgpIHgkc2VbeCRtZXRob2QgJWluJSBjKCJJbnZlcnNlIHZhcmlhbmNlIHdlaWdodGVkIiwgIldhbGQgcmF0aW8iKV0pLAogIHJzcV9leHAgPSBzYXBwbHkobGlzdChzMCwgczEsIHMyLCBzMyksIGZ1bmN0aW9uKHgpIHgkc25wX3IyLmV4cG9zdXJlKSwKICByc3Ffb3V0ID0gc2FwcGx5KGxpc3QoczAsIHMxLCBzMiwgczMpLCBmdW5jdGlvbih4KSB4JHNucF9yMi5vdXRjb21lKSwKICBjb3JyZWN0X3N0ZWlnZXIgPSBzYXBwbHkobGlzdChzMCwgczEsIHMyLCBzMyksIGZ1bmN0aW9uKHgpIHgkY29ycmVjdF9jYXVzYWxfZGlyZWN0aW9uKSwKICBzdGVpZ2VyX3B2YWwgPSBzYXBwbHkobGlzdChzMCwgczEsIHMyLCBzMyksIGZ1bmN0aW9uKHgpIHgkc3RlaWdlcl9wdmFsKQopCmBgYAoKLSBTbW9raW5nIGJlaGF2aW91cnMgaGF2ZSBhIGNhdXNhbCBpbmZsdWVuY2Ugb24gbHVuZyBmdW5jdGlvbiAoRkVWMSksIHdoZXJlIGhpZ2hlciBzbW9raW5nIHJlbGF0ZXMgdG8gcG9vcmVyIGx1bmcgZnVuY3Rpb24KLSBUaGUgY2F1c2FsIGRpcmVjdGlvbiBpcyBjb25zaXN0ZW50bHkgZnJvbSBzbW9raW5nIGJlaGF2aW91ciB0byBsdW5nIGZ1bmN0aW9uCgoKIyMgTEQgYmV0d2VlbiBMdXR6IFNOUHMKCkl0IHNlZW1zIGxpa2UgbWFueSBvZiB0aGUgU05QcyBhcmUgdmVyeSBjbG9zZSB0byBlYWNoIG90aGVyLiAKCmBgYHtyfQpsZCA8LSBsZF9tYXRyaXgobHV0el9ycykKbGQKCgpgYGAKClRoZXkgYXJlIG5vdCBpbmRlcGVuZGVudC4KCg==</div>
 
 
 
