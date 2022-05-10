@@ -1,12 +1,14 @@
 ---
-title: Confounder analysis in Steiger filtering
+title: Supplementary note - Unmeasured confounding in Steiger filtering
 author: Gibran Hemani
 output: pdf_document
 ---
 
 ## Background
 
-For a system in which the MR Steiger test infers that X is causal for Y, and the estimated effect is $\beta_{xy}$, where
+The MR Steiger method uses instrumental variables to infer the causal orientation between two variables. Once an orientation is inferred there is a question as to whether the inference is erroneous due to processes that can bias the MR Steiger method. Here we focus on unmeasured confounding. Suppose that X is inferred to be causal for Y, we ask whether some combination of confounding parameters could give rise to the inferred direction under a data generating model in which the reverse causal direction is true.
+
+![DAG](dag.png)
 
 $$
 X = \alpha_x + \beta_{gx} G + \beta_{ux} U + e_{x}
