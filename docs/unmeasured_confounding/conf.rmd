@@ -1,6 +1,6 @@
 ---
-title: Supplementary note - Unmeasured confounding in Steiger filtering
-author: Gibran Hemani
+title: Supplementary note - Unmeasured confounding
+author: Gibran Hemani, Kate Tilling, George Davey Smith
 output: pdf_document
 ---
 
