@@ -6,21 +6,23 @@ output: pdf_document
 
 ## Background
 
-The MR Steiger method uses instrumental variables to infer the causal orientation between two variables. Once an orientation is inferred there is a question as to whether the inference is erroneous due to processes that can bias the MR Steiger method. Here we focus on unmeasured confounding. Suppose that X is inferred to be causal for Y, we ask whether some combination of confounding parameters could give rise to the inferred direction under a data generating model in which the reverse causal direction is true.
+The MR Steiger method uses instrumental variables to infer the causal orientation between two variables. Once an orientation is inferred there is a question as to whether the inference is erroneous due to processes that can bias the MR Steiger method. Here we focus on unmeasured confounding. Suppose that X is inferred to be causal for Y, we ask whether some combination of confounding parameters could give rise to the inferred direction under a data generating model in which the reverse causal direction is true. Figure 1 illustrates the two competing causal directions.
 
-![DAG](dag.png)
+![Two competing causal directions and their parameters represented as path diagrams.](steiger_dag.pdf)
+
+According to the Inferred causal direction in figure 1,
 
 $$
 X = \alpha_x + \beta_{gx} G + \beta_{ux} U + e_{x}
 $$
 
-where SNP with allele frequency $p$ has variance $\sigma^2_G = 2 * p * (1-p)$, $U \sim N(0, \sigma^2_u)$ is an unmeasured confounder, and $e_x \sim N(0, \sigma^2_{e_x})$ is an error term. The variance of X will be 
+where SNP with allele frequency $p$ has variance $\sigma^2_G = 2 p (1-p)$, $U \sim N(0, \sigma^2_u)$ is an unmeasured confounder, and $e_x \sim N(0, \sigma^2_{e_x})$ is an error term. The variance of X will be 
 
 $$
 \sigma^2_x = \beta_{gx}^2 \sigma^2_g + \beta_{ux}^2 \sigma^2_u + \sigma^2_{e_x}
 $$
 
-Write
+We can also write
 
 $$
 Y = \alpha_{y} + \beta_{xy} X + \beta_{uy} U + e_{y}
@@ -35,18 +37,17 @@ $$
 The variance explained in X by G will be
 
 $$
-R^2_{gx} = \frac{\beta_{gx}^2 \sigma^2_g} {\beta_{gx}^2 \sigma^2_g + \beta_{ux}^2 * \sigma^2_u + \sigma^2_{e_x}}
+R^2_{gx} = \frac{\beta_{gx}^2 \sigma^2_g} {\beta_{gx}^2 \sigma^2_g + \beta_{ux}^2 \sigma^2_u + \sigma^2_{e_x}}
 $$
 The variance explained in Y by G will be
 
 $$
-R^2_{gy} = \frac{\beta_{gx}^2\beta_{xy}^2 \sigma^2_g} {\sigma^2_u (\beta_{xy}^2\beta_{gx}^2 \sigma^2_g + \sigma^2_u (\beta_{xy} \beta_{ux}+\beta_{uy})^2 + \beta_{xy}^2 \sigma^2_{e_x} + \sigma^2_{e_y}}
+R^2_{gy} = \frac{\beta_{gx}^2\beta_{xy}^2 \sigma^2_g} {\beta_{xy}^2\beta_{gx}^2 \sigma^2_g + \sigma^2_u (\beta_{xy} \beta_{ux}+\beta_{uy})^2 + \beta_{xy}^2 \sigma^2_{e_x} + \sigma^2_{e_y}}
 $$
-
 The variance explained in X by U will be
 
 $$
-R^2_{ux} = \frac{\beta_{gx}^2 \sigma^2_g}{\beta_{gx}^2 \sigma^2_g + \beta_{ux}^2 \sigma^2_u + \sigma^2_{e_x}}
+R^2_{ux} = \frac{\beta_{ux}^2 \sigma^2_u}{\beta_{gx}^2 \sigma^2_g + \beta_{ux}^2 \sigma^2_u + \sigma^2_{e_x}}
 $$
 
 The variance explained in Y by U will be
@@ -55,7 +56,37 @@ $$
 R^2_{uy} = \frac{\sigma^2_u (\beta_{uy} + \beta_{ux} \beta_{xy})^2} {\beta_{xy}^2 \beta_{gx}^2 \sigma^2_g + \sigma^2_u(\beta_{xy} \beta_{ux} + \beta_{uy})^2 + \beta_{xy}^2 \sigma^2_{e_x} + \sigma^2_{e_y}}
 $$
 
-Under this system, the observed $R^2_{gy}$ will be smaller than the observed $R^2_{gx}$ unless all variance in Y is explained by X, in which case $R^2_{gy} = R^2_{gx}$ . In practice we tend to know the following values: $\beta_{gx}$, $\sigma^2_g$, $\sigma^2_x$, $\sigma^2_y$. The analysis is used to estimate $\beta_{xy}$. We can often obtain estimates of $\beta_{OLS}$. We do not know $\sigma^2_u$, $\beta_{ux}$ or $\beta_{uy}$, but given estimates of $\beta_{OLS}$ and $\beta_{xy}$ we can obtain possible values for these confounder parameters. The observational association in this system will be
+Note that at this stage the asymptotic result of the computationally intensive simulations employed by Lutz et al could be derived analytically by observing that 
+
+$$
+\begin{aligned}
+R^2_{gx} > R^2{gy} & \Rightarrow \frac{\beta_{gx}^2 \sigma^2_g} {\beta_{gx}^2 \sigma^2_g + \beta_{ux}^2 \sigma^2_u + \sigma^2_{e_x}} > \frac{\beta_{gx}^2\beta_{xy}^2 \sigma^2_g} {\beta_{xy}^2\beta_{gx}^2 \sigma^2_g + \sigma^2_u (\beta_{xy} \beta_{ux}+\beta_{uy})^2 + \beta_{xy}^2 \sigma^2_{e_x} + \sigma^2_{e_y}} \\
+& \Rightarrow \beta^2_{uy}\sigma^2_u + 2\beta_{ux}\beta_{uy}\beta_{xy}\sigma^2_u + \sigma^2_{e_y} > 0
+\end{aligned}
+$$
+
+is a second-degree polynomial inequality for $\beta_{uy}$ which can be solved as
+
+$$
+\begin{aligned}
+\Delta &= 4\beta^2_{ux}\beta^2_{xy}\sigma^4_u - 4\sigma^2_u \sigma^2_{e_y} \\
+& = 4\sigma^2_u(\beta^2_{ux}\beta^2_{xy} - \sigma^2_{e_y})
+\end{aligned}
+$$
+This means that the comparison of the two R^2 values reduces to the sign of the quantity $\beta^2_{ux}\beta^2_{xy} - \sigma^2_{e_y}$. If the latter is negative, $R^2_{gx} > R^2_{gy}$ holds regardless of the value of $\beta_{uy}$ (and ignoring finite-sample variation). If it's positive, we will have $R^2_{gx} < R^2_{gy}$ in the interval $[ \beta_1, \beta_2 ]$ where 
+
+$$
+\begin{aligned}
+\beta_{1,2} &= \frac{-2\beta_{xu}\beta_{xy}\sigma^2_u \pm \sqrt{\Delta}}{2\sigma^2_u} \\
+&= \beta_{xu}\beta_{xy} \pm \sqrt{\beta^2_{xu}\beta^2_{xy} - \frac{\sigma^2_{e_y}}{\sigma^2_u}}
+\end{aligned}
+$$
+
+As an application, for the parameter values used by Lutz et al. we obtain the reverse causal direction for $\beta_{uy}$ values in the interval $[5 - 2\sqrt{6}, 5+2\sqrt{6}] \approx [0.1, 9.9]$.
+
+However as described in the main text this does not serve as a sufficient sensitivity analysis because it allows fixed parameters to vary considerably. We continue now to derive a more appropriate sensitivity analysis that does fix known parameters. 
+
+In practice we tend to know the following values: $\beta_{gx}$, $\sigma^2_g$, $\sigma^2_x$, $\sigma^2_y$. The analysis is used to estimate $\beta_{xy}$. We can often obtain estimates of $\beta_{OLS}$. We do not know $\sigma^2_u$, $\beta_{ux}$ or $\beta_{uy}$, but given estimates of $\beta_{OLS}$ and $\beta_{xy}$ we can obtain possible values for these confounder parameters. The observational association in this system will be
 
 $$
 \beta_{OLS} = \frac{\beta_{gx}^2 \beta_{xy} \sigma^2_g + \beta_{ux}^2 \beta_{xy} \sigma^2_u + \beta_{ux} \beta_{uy} \sigma^2_u + \beta_{xy} \sigma^2_{e_x}} {\sigma^2_g \beta_{gx}^2 + \sigma^2_u \beta_{ux}^2 + \sigma^2_{e_x}}
@@ -118,6 +149,7 @@ This function obtains the rsq values given fixed parameters
 
 ```{r}
 get_calcs <- function(bxy, bgx, bux, buy, vg, vu, vex, vey) {
+    args <- as.list(environment())
     bxyo <- ((bgx^2*bxy*vg + bux^2*bxy*vu + bux*buy*vu + bxy*vex) / (vg*bgx^2 + vu*bux^2 + vex))
     vx <- bgx^2 * vg + bux^2 * vu + vex
     vy <- bxy^2*bgx^2*vg + (bxy*bux+buy)^2*vu + bxy^2*(vex) + vey
@@ -132,7 +164,7 @@ get_calcs <- function(bxy, bgx, bux, buy, vg, vu, vex, vey) {
     rsquy <- (buy + bux * bxy)^2 * vu / (bxy^2*bgx^2*vg + (bxy*bux+buy)^2*vu + bxy^2*(vex) + vey)
     rsquxs <- rsqux * sign(bux)
     rsquys <- rsquy * sign(buy)
-    return(list(
+    return(c(args, list(
         vx=vx,
         vy=vy,
         bxyo=bxyo, 
@@ -147,11 +179,21 @@ get_calcs <- function(bxy, bgx, bux, buy, vg, vu, vex, vey) {
         rsquxs=rsquxs, 
         rsquys=rsquys, 
         rsqxys=rsqxys
-    ))
+    )))
 }
 ```
 
 Check by comparing to simulated individual level data
+
+```{r}
+fn <- function(x,y, z)
+{
+  a <- 10
+  
+}
+fn(1,c(2,3,4,5),3) %>% as_tibble()
+```
+
 
 ```{r}
 get_calcs_id <- function(bxy, bgx, bux, buy, vg, vu, vex, vey, n=500000){
@@ -181,10 +223,7 @@ get_calcs_id(0.1, 1, 1, 1, 0.5, 0.1, 0.4, 0.9-0.1^2) %>% as_tibble())
 Parameter ranges used by Lutz et al
 
 ```{r}
-bind_rows(
-    get_calcs(1, 1, -5, 0, 1, 1, 1, 1) %>% as_tibble(),
-    get_calcs(1, 1, -5, 11, 1, 1, 1, 1) %>% as_tibble()
-)
+get_calcs(1, 1, -5, seq(0,11,by=1), 1, 1, 1, 1) %>% as_tibble() %>% dplyr::select(bux, buy, vx, vy, rsqgx, rsqgy)
 ```
 
 Calculate the values of rux and ruy that would satisfy the fixed parameters
