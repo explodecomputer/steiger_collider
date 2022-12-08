@@ -73,6 +73,7 @@ $$
 & = 4\sigma^2_u(\beta^2_{ux}\beta^2_{xy} - \sigma^2_{e_y})
 \end{aligned}
 $$
+
 This means that the comparison of the two R^2 values reduces to the sign of the quantity $\beta^2_{ux}\beta^2_{xy} - \sigma^2_{e_y}$. If the latter is negative, $R^2_{gx} > R^2_{gy}$ holds regardless of the value of $\beta_{uy}$ (and ignoring finite-sample variation). If it's positive, we will have $R^2_{gx} < R^2_{gy}$ in the interval $[ \beta_1, \beta_2 ]$ where 
 
 $$
@@ -84,9 +85,9 @@ $$
 
 As an application, for the parameter values used by Lutz et al. we obtain the reverse causal direction for $\beta_{uy}$ values in the interval $[5 - 2\sqrt{6}, 5+2\sqrt{6}] \approx [0.1, 9.9]$.
 
-However as described in the main text this does not serve as a sufficient sensitivity analysis because it allows fixed parameters to vary considerably. We continue now to derive a more appropriate sensitivity analysis that does fix known parameters. 
+However as described in the main text this does not serve as a sufficient sensitivity analysis because it allows observed quantitites to vary considerably. We continue now to derive a more appropriate sensitivity analysis that does fix observed quantitites. 
 
-In practice we tend to know the following values: $\beta_{gx}$, $\sigma^2_g$, $\sigma^2_x$, $\sigma^2_y$. The analysis is used to estimate $\beta_{xy}$. We can often obtain estimates of $\beta_{OLS}$. We do not know $\sigma^2_u$, $\beta_{ux}$ or $\beta_{uy}$, but given estimates of $\beta_{OLS}$ and $\beta_{xy}$ we can obtain possible values for these confounder parameters. The observational association in this system will be
+In practice we tend to observe the following quantitites: $\beta_{gx}$, $\sigma^2_g$, $\sigma^2_x$, $\sigma^2_y$. The analysis is used to estimate $\beta_{xy}$. We can often obtain estimates of $\beta_{OLS}$. We do not know $\sigma^2_u$, $\beta_{ux}$ or $\beta_{uy}$, but given estimates of $\beta_{OLS}$ and $\beta_{xy}$ we can obtain possible values for these confounder parameters. The observational association in this system will be
 
 $$
 \beta_{OLS} = \frac{\beta_{gx}^2 \beta_{xy} \sigma^2_g + \beta_{ux}^2 \beta_{xy} \sigma^2_u + \beta_{ux} \beta_{uy} \sigma^2_u + \beta_{xy} \sigma^2_{e_x}} {\sigma^2_g \beta_{gx}^2 + \sigma^2_u \beta_{ux}^2 + \sigma^2_{e_x}}
@@ -125,7 +126,7 @@ $$
 \sigma^2_{e_y} = \sigma^2_{y} - \beta_{xy}^2 \beta_{gx}^2 \sigma^2_g - \sigma^2_u (\beta_{xy} \beta_{ux}+\beta_{uy})^2 - \beta_{xy}^2 \sigma^2_{e_x}
 $$
 
-can be inferred directly. Overall, through this set of equations, we can obtain confounding values that could give rise to the observed fixed parameters under either the inferred causal direction or the reverse causal direction. In the case of the reverse causal direction the value of $\beta_{xy, rev} = 1/\beta_{xy}$ and $\beta_{OLS, rev} = \beta_{OLS} \sigma^2_x / \sigma^2_y$ , $\beta_{gx, rev} = \beta_{gx} \beta_{xy}$. The sensitivity analysis proceeds by finding the total confounding parameter space across models for the inferred causal direction and the reverse causal direction, and then calculating the fraction of that parameter space that agrees with the inferred causal direction. A proportion close to 1 will suggest that there is relatively little chance of the inferred direction being incorrect due to unmeasured confounding. If the OLS estimate is unknown then a range of plausible values can be evaluated.
+can be inferred directly. Overall, through this set of equations, we can obtain confounding values that could give rise to the observed quantitites under either the inferred causal direction or the reverse causal direction. In the case of the reverse causal direction the value of $\beta_{xy, rev} = 1/\beta_{xy}$ and $\beta_{OLS, rev} = \beta_{OLS} \sigma^2_x / \sigma^2_y$ , $\beta_{gx, rev} = \beta_{gx} \beta_{xy}$. The sensitivity analysis proceeds by finding the total confounding parameter space across models for the inferred causal direction and the reverse causal direction, and then calculating the fraction of that parameter space that agrees with the inferred causal direction. A proportion close to 1 will suggest that there is relatively little chance of the inferred direction being incorrect due to unmeasured confounding. If the OLS estimate is unknown then a range of plausible values can be evaluated. 
 
 One further component to this approach is the option to weight the possible parameter space. We might consider it less plausible that large fractions of the variance in X and Y are explained by confounding variables, and so the contribution of scenarios that have confounding values that explain more of the variance can be downweighted. The weighting is obtained by
 
@@ -134,6 +135,8 @@ w = \phi_{0, s}(R^2_{ux})\phi_{0, s}(R^2_{uy})
 $$
 
 where $\phi_{0,s}$ is the normal density function with mean 0 and standard deviation $s$, the scaling parameter. Smaller $s$ will lead to more downweighting of larger confounding variances.
+
+Finally, as an alternative to reporting an overall probability, analysts can evaluate the confounding parameters that would be required to give rise to the opposing causal direction to evaluate their plausibility.
 
 ## Analysis
 
