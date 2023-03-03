@@ -60,7 +60,7 @@ Note that at this stage the asymptotic result of the computationally intensive s
 
 $$
 \begin{aligned}
-R^2_{gx} > R^2{gy} & \Rightarrow \frac{\beta_{gx}^2 \sigma^2_g} {\beta_{gx}^2 \sigma^2_g + \beta_{ux}^2 \sigma^2_u + \sigma^2_{e_x}} > \frac{\beta_{gx}^2\beta_{xy}^2 \sigma^2_g} {\beta_{xy}^2\beta_{gx}^2 \sigma^2_g + \sigma^2_u (\beta_{xy} \beta_{ux}+\beta_{uy})^2 + \beta_{xy}^2 \sigma^2_{e_x} + \sigma^2_{e_y}} \\
+R^2_{gx} > R^2_{gy} & \Rightarrow \frac{\beta_{gx}^2 \sigma^2_g} {\beta_{gx}^2 \sigma^2_g + \beta_{ux}^2 \sigma^2_u + \sigma^2_{e_x}} > \frac{\beta_{gx}^2\beta_{xy}^2 \sigma^2_g} {\beta_{xy}^2\beta_{gx}^2 \sigma^2_g + \sigma^2_u (\beta_{xy} \beta_{ux}+\beta_{uy})^2 + \beta_{xy}^2 \sigma^2_{e_x} + \sigma^2_{e_y}} \\
 & \Rightarrow \beta^2_{uy}\sigma^2_u + 2\beta_{ux}\beta_{uy}\beta_{xy}\sigma^2_u + \sigma^2_{e_y} > 0
 \end{aligned}
 $$
@@ -74,7 +74,7 @@ $$
 \end{aligned}
 $$
 
-This means that the comparison of the two R^2 values reduces to the sign of the quantity $\beta^2_{ux}\beta^2_{xy} - \sigma^2_{e_y}$. If the latter is negative, $R^2_{gx} > R^2_{gy}$ holds regardless of the value of $\beta_{uy}$ (and ignoring finite-sample variation). If it's positive, we will have $R^2_{gx} < R^2_{gy}$ in the interval $[ \beta_1, \beta_2 ]$ where 
+This means that the comparison of the two $R^2$ values reduces to the sign of the quantity $\beta^2_{ux}\beta^2_{xy} - \sigma^2_{e_y}$. If the latter is negative, $R^2_{gx} > R^2_{gy}$ holds regardless of the value of $\beta_{uy}$ (and ignoring finite-sample variation). If it's positive, we will have $R^2_{gx} < R^2_{gy}$ in the interval $[ \beta_1, \beta_2 ]$ where 
 
 $$
 \begin{aligned}
@@ -126,17 +126,15 @@ $$
 \sigma^2_{e_y} = \sigma^2_{y} - \beta_{xy}^2 \beta_{gx}^2 \sigma^2_g - \sigma^2_u (\beta_{xy} \beta_{ux}+\beta_{uy})^2 - \beta_{xy}^2 \sigma^2_{e_x}
 $$
 
-can be inferred directly. Overall, through this set of equations, we can obtain confounding values that could give rise to the observed quantitites under either the inferred causal direction or the reverse causal direction. In the case of the reverse causal direction the value of $\beta_{xy, rev} = 1/\beta_{xy}$ and $\beta_{OLS, rev} = \beta_{OLS} \sigma^2_x / \sigma^2_y$ , $\beta_{gx, rev} = \beta_{gx} \beta_{xy}$. The sensitivity analysis proceeds by finding the total confounding parameter space across models for the inferred causal direction and the reverse causal direction, and then calculating the fraction of that parameter space that agrees with the inferred causal direction. A proportion close to 1 will suggest that there is relatively little chance of the inferred direction being incorrect due to unmeasured confounding. If the OLS estimate is unknown then a range of plausible values can be evaluated. 
-
-One further component to this approach is the option to weight the possible parameter space. We might consider it less plausible that large fractions of the variance in X and Y are explained by confounding variables, and so the contribution of scenarios that have confounding values that explain more of the variance can be downweighted. The weighting is obtained by
+can be inferred directly. Overall, through this set of equations, we can obtain confounding values that could give rise to the observed quantitites under either the inferred causal direction or the reverse causal direction. In the case of the reverse causal direction the value of $\beta_{xy, rev} = 1/\beta_{xy}$ and $\beta_{OLS, rev} = \beta_{OLS} \sigma^2_x / \sigma^2_y$ , $\beta_{gx, rev} = \beta_{gx} \beta_{xy}$. The sensitivity analysis proceeds by identifying the values of $R^2_{ux}$ and $R^2_{uy}$ that agree or disagree with the inferred causal direction, allowing the analyst to make a judgement as to the reliability of the inference. Buiding on this, one can determine the probability of the inferred causal direction being correct by framing it in a Bayesian context. Consider the value $C$ being 1 if the values of $R^2_{ux}$ and $R^2_{uy}$ agree with the inferred causal direction, and 0 otherwise. Across all possible values of $R^2_{ux}$ and $R^2_{uy}$, which are beta distributed with shape parameters $a$ and $b$, the probability that the inferred direction is correct is given by
 
 $$
-w = \phi_{0, s}(R^2_{ux})\phi_{0, s}(R^2_{uy})
+p(C | a,b) = \int p(C | R^2_{ux}, R^2_{uy}) p(R^2_{ux}, R^2_{uy} | a,b)
 $$
 
-where $\phi_{0,s}$ is the normal density function with mean 0 and standard deviation $s$, the scaling parameter. Smaller $s$ will lead to more downweighting of larger confounding variances.
+A posterior probability close to 1 will suggest that there is relatively little chance of the inferred direction being incorrect due to unmeasured confounding. Choosing shape parameters of $a=1$ and $b=1$ would give a flat prior, where all confounding values are equally likely. Elevating $b$ to a larger value will downweight very large confounding values, while reducing $a$ to a lower value will enforce more weight for confounding close to 0. To be conservative we would recommend using a flat prior, whereas values of $a=1, b=10$ might be more realistic which eliminates unrealistically large confounding values. Note that for simplicity, our implementation doesn't calculate the integral function directly, rather for a dense range of $R^2_{ux}$ and $R^2_{uy}$ values we find the fraction of instances in which the inferred causal direction is supported, weighting the contribution of each parameter value by the weight associated with the specified prior distribution.
 
-Finally, as an alternative to reporting an overall probability, analysts can evaluate the confounding parameters that would be required to give rise to the opposing causal direction to evaluate their plausibility.
+Note also that if the OLS estimate is unknown then analysts can specify a range of plausible values to be evaluated.
 
 ## Analysis
 
@@ -255,7 +253,7 @@ Test sensitivity analysis
 
 
 ```{r}
-u_sensitivity <- function(bxy, bxyo, bgx, vx, vy, vg, vu = 1, simsize=10000, scaling=1, plot=TRUE)
+u_sensitivity <- function(bxy, bxyo, bgx, vx, vy, vg, vu = 1, simsize=10000, beta_a=1, beta_b=1, plot=TRUE)
 {
     o <- params <- bind_rows(
         sens(bxy=bxy, bxyo=bxyo, bgx=bgx, vx=vx, vy=vy, vu=vu, vg=vg, simsize=simsize) %>%
@@ -281,7 +279,7 @@ u_sensitivity <- function(bxy, bxyo, bgx, vx, vy, vg, vu = 1, simsize=10000, sca
             d <- sqrt((x1-x2)^2 + (y1-y2)^2)
             d[d > quantile(d, na.rm=T, probs=0.99)*4] <- NA
             x$d <- c(NA, d)
-            x$weight <- dnorm(x$rsqux, sd=scaling) * dnorm(x$rsquy, sd=scaling)
+            x$weight <- dbeta(x$rsqux, shape1=beta_a, shape2=beta_b) * dbeta(x$rsquy, shape1=beta_a, shape2=beta_b)
             x
         })
     
@@ -300,20 +298,21 @@ u_sensitivity <- function(bxy, bxyo, bgx, vx, vy, vg, vu = 1, simsize=10000, sca
 Example 1 - bxy and bxyo are similar, and confounders that explain more of the variance are strongly downweighted
 
 ```{r}
-r <- u_sensitivity(bxy=0.1, bxyo=0.2, bgx=0.5, vx=1, vy=1, vg=0.5, scaling=0.1)
+r <- u_sensitivity(bxy=0.1, bxyo=0.2, bgx=0.5, vx=1, vy=1, vg=0.5, beta_a=1, beta_b=10)
 r
 ```
 
 Same example but with more neutral weighting
+
 ```{r}
-r <- u_sensitivity(bxy=0.1, bxyo=0.1, bgx=0.5, vx=1, vy=1, vg=0.5, scaling=10)
+r <- u_sensitivity(bxy=0.1, bxyo=0.1, bgx=0.5, vx=1, vy=1, vg=0.5, beta_a=1, beta_b=1)
 r
 ```
 
 Example 2 - bxy and bxyo are very different
 
 ```{r}
-r <- u_sensitivity(bxy=0.1, bxyo=-1, vg=1, bgx=1, vx=10, vy=20, scaling=10)
+r <- u_sensitivity(bxy=0.1, bxyo=-1, vg=1, bgx=1, vx=10, vy=20, beta_a=1, beta_b=1)
 r
 ```
 
@@ -328,7 +327,8 @@ param <- expand.grid(
     vx = 4,
     vy = c(8,16),
     plot=FALSE,
-    scaling=10
+    beta_a=1,
+    beta_b=1
 )
 param$prop <- sapply(1:nrow(param), function(i) do.call(u_sensitivity, param[i,])$prop)
 ```
@@ -363,5 +363,5 @@ bxy <- mr(d, method="mr_ivw")$b
 
 # From https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6324286/
 ols <- (0.8 + 1.7)/2 / 20.4 * 3.5
-u_sensitivity(bxy=bxy, bxyo=ols, bgx=sqrt(sum(d$rsq.exposure)), vx=1, vy=1, vg=1, vu=1, scaling=0.5)
+u_sensitivity(bxy=bxy, bxyo=ols, bgx=sqrt(sum(d$rsq.exposure)), vx=1, vy=1, vg=1, vu=1, beta_a=1, beta_b=1)
 ```
