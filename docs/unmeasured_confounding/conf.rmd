@@ -126,7 +126,7 @@ $$
 \sigma^2_{e_y} = \sigma^2_{y} - \beta_{xy}^2 \beta_{gx}^2 \sigma^2_g - \sigma^2_u (\beta_{xy} \beta_{ux}+\beta_{uy})^2 - \beta_{xy}^2 \sigma^2_{e_x}
 $$
 
-can be inferred directly. Overall, through this set of equations, we can obtain confounding values that could give rise to the observed quantitites under either the inferred causal direction or the reverse causal direction. In the case of the reverse causal direction the value of $\beta_{xy, rev} = 1/\beta_{xy}$ and $\beta_{OLS, rev} = \beta_{OLS} \sigma^2_x / \sigma^2_y$ , $\beta_{gx, rev} = \beta_{gx} \beta_{xy}$. The sensitivity analysis proceeds by identifying the values of $R^2_{ux}$ and $R^2_{uy}$ that agree or disagree with the inferred causal direction, allowing the analyst to make a judgement as to the reliability of the inference. Building on this, one can determine the probability of the inferred causal direction being correct by framing it in a Bayesian context. Consider the value $C$ being 1 if the values of $R^2_{ux}$ and $R^2_{uy}$ agree with the inferred causal direction, and 0 otherwise. We implement the method using a beta-distributed prior for confounding values with shape parameters $a$ and $b$ for reasons described later, though analysts could specify alternative prior distributions. Across all possible values of $R^2_{ux}$ and $R^2_{uy}$ the probability that the inferred direction is correct is given by
+can be inferred directly once the value of $\sigma^2_{u}$ is set to 1 for convenience. Overall, through this set of equations, we can obtain confounding values that could give rise to the observed quantitites under either the inferred causal direction or the reverse causal direction. In the case of the reverse causal direction the value of $\beta_{xy, rev} = 1/\beta_{xy}$ and $\beta_{OLS, rev} = \beta_{OLS} \sigma^2_x / \sigma^2_y$ , $\beta_{gx, rev} = \beta_{gx} \beta_{xy}$. The sensitivity analysis proceeds by identifying the values of $R^2_{ux}$ and $R^2_{uy}$ that agree or disagree with the inferred causal direction, allowing the analyst to make a judgement as to the reliability of the inference. Building on this, one can determine the probability of the inferred causal direction being correct by framing it in a Bayesian context. Consider the value $C$ being 1 if the values of $R^2_{ux}$ and $R^2_{uy}$ agree with the inferred causal direction, and 0 otherwise. We implement the method using a beta-distributed prior for confounding values with shape parameters $a$ and $b$ for reasons described later, though analysts could specify alternative prior distributions. Across all possible values of $R^2_{ux}$ and $R^2_{uy}$ the probability that the inferred direction is correct is given by
 
 $$
 p(C | a,b) = \int p(C | R^2_{ux}, R^2_{uy}) p(R^2_{ux}, R^2_{uy} | a,b)
@@ -185,16 +185,6 @@ get_calcs <- function(bxy, bgx, bux, buy, vg, vu, vex, vey) {
 ```
 
 Check by comparing to simulated individual level data
-
-```{r}
-fn <- function(x,y, z)
-{
-  a <- 10
-  
-}
-fn(1,c(2,3,4,5),3) %>% as_tibble()
-```
-
 
 ```{r}
 get_calcs_id <- function(bxy, bgx, bux, buy, vg, vu, vex, vey, n=500000){
